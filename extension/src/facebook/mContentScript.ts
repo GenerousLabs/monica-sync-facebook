@@ -130,31 +130,6 @@ const runLoop = async (doc: Document) => {
     removePopOver(doc);
     return;
   }
-
-  // TODO Insert the new div here
-  insertPopOver(doc);
-  return;
-
-  if (
-    !globalThis.confirm(
-      "Do you want to start scrolling this friends page now? #ctuOfv"
-    )
-  ) {
-    return;
-  }
-
-  await scrollToTheBottom();
-
-  if (
-    !globalThis.confirm(
-      "Do you want to capture all the friends that are currently visible on this page?"
-    )
-  ) {
-    return;
-  }
-
-  await captureAndSaveFriends(doc);
-  globalThis.alert("Your friend list has been saved. #rFmagW");
 };
 
 const start = async (doc: Document) => {
