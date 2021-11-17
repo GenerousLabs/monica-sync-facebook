@@ -17,16 +17,29 @@
       This extension takes no action without your explicit input. But once you
       start it you can leave it running as the process can take some time.
     </p>
+
     <h2>Monica Settings</h2>
-    <form>
+    <form id="monicaForm">
       <p>
-        <label>Monica API Url: <input type="text" id="monicaUrl" /></label>
+        <label>Monica API Url: <input type="text" id="monicaApiUrl" /></label>
       </p>
       <p>
-        <label>Monica Auth Token: <input type="text" id="token" /></label>
+        <label
+          >Monica Auth Token: <input type="text" id="monicaApiToken"
+        /></label>
       </p>
       <button type="submit">Save Monica Settings</button>
     </form>
+
+    <h2>Facebook Friends</h2>
+
+    <p>
+      To capture your Facebook friends open the
+      <a href="https://m.facebook.com/" target="_blank">m.facebook.com</a> site
+      and navigate to your friends list page. Then click the extension icon and
+      click the "Scrape Friends List" button.
+    </p>
+    <p>NOTE: Please ensure you only have 1 Facebook tab open at any time.</p>
 
     <script type="module" src="options.ts"></script>
   </body>
