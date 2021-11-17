@@ -111,7 +111,14 @@ const insertPopOver = (doc: Document) => {
   getByIdOrThrow(doc, "captureFriends").onclick = captureAndSaveFriends;
 };
 
-const start = async (doc: Document) => {
+const removePopOver = (doc: Document) => {
+  const container = doc.getElementById(POPOVER_DIV_ID);
+  if (container !== null) {
+    container.remove();
+  }
+};
+
+const runLoop = async (doc: Document) => {
   const { facebookFriendsUrl } = await getState();
 
   if (typeof facebookFriendsUrl === "undefined") {
@@ -120,6 +127,7 @@ const start = async (doc: Document) => {
 
   // TODO: Improve this check
   if (!document.location.href.startsWith(facebookFriendsUrl)) {
+    removePopOver(doc);
     return;
   }
 
@@ -147,6 +155,12 @@ const start = async (doc: Document) => {
 
   await captureAndSaveFriends(doc);
   globalThis.alert("Your friend list has been saved. #rFmagW");
+};
+
+const start = async (doc: Document) => {
+  globalThis.setInterval(() => {
+    runLoop(doc);
+  }, 1500);
 };
 
 globalThis.setTimeout(() => {
