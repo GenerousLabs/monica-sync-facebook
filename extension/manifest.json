@@ -1,0 +1,27 @@
+{
+  "manifest_version": 2,
+  "name": "monica-sync-facebook",
+  "version": "0.1",
+
+  "permissions": ["*://*/*", "activeTab", "storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://mbasic.facebook.com/*"],
+      "js": ["src/facebook/mbasicContentScript.ts"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": {
+    "page": "src/options/options.html",
+    "open_in_tab": true
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "monica-sync-facebook@generous.software"
+    }
+  },
+  "browser_action": {
+    "default_title": "Monica Sync Facebook",
+    "default_popup": "src/popup/popup.html"
+  }
+}
