@@ -3,6 +3,8 @@ import { getState } from "../state";
 import { getByIdOrThrow } from "../utils";
 import { setFriends } from "./friends";
 
+const POPOVER_DIV_ID = "monicaSyncFacebookPopover";
+
 const scrollToTheBottom = async () => {
   let pageHeight = 0;
   let noChangeCount = 0;
@@ -73,10 +75,8 @@ const captureAndSaveFriends = async () => {
 const createContainer = (doc: Document) => {
   const { body } = doc;
 
-  const id = "monicaSyncFacebookPopover";
-
   const container = doc.createElement("div");
-  container.id = id;
+  container.id = POPOVER_DIV_ID;
   container.style.position = "fixed";
   container.style.top = "0";
   container.style.left = "50%";
@@ -86,7 +86,7 @@ const createContainer = (doc: Document) => {
   container.style.zIndex = "1000";
   container.style.backgroundColor = "red";
 
-  const existingContainer = doc.getElementById(id);
+  const existingContainer = doc.getElementById(POPOVER_DIV_ID);
 
   if (existingContainer) {
     return existingContainer;
