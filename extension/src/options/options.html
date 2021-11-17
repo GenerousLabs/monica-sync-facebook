@@ -6,15 +6,26 @@
   </head>
 
   <body>
-    <h1>Options</h1>
+    <h1>Monica Sync Facebook</h1>
+    <p>This extension syncs contacts from Facebook into Monica.</p>
+    <p>To get started you need to:</p>
+    <ul>
+      <li>Input your <strong>monica URL and token</strong></li>
+      <li>Capture your friends list from Facebook</li>
+    </ul>
+    <p>
+      This extension takes no action without your explicit input. But once you
+      start it you can leave it running as the process can take some time.
+    </p>
+    <h2>Monica Settings</h2>
     <form>
-      <p>
-        <label>Monica Auth Token: <input type="text" id="token" /></label>
-      </p>
       <p>
         <label>Monica API Url: <input type="text" id="monicaUrl" /></label>
       </p>
-      <button type="submit">Save</button>
+      <p>
+        <label>Monica Auth Token: <input type="text" id="token" /></label>
+      </p>
+      <button type="submit">Save Monica Settings</button>
     </form>
 
     <script type="module" src="options.ts"></script>
