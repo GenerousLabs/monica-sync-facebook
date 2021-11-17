@@ -6,3 +6,8 @@ export type State = {
   /** The URL to the user's own Facebook friends list */
   facebookFriendsUrl?: string;
 };
+
+export type FacebookFriend = {
+  profileUrl: string;
+  name: string;
+};
