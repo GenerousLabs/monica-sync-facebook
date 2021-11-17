@@ -4,6 +4,9 @@
   "version": "0.1",
 
   "permissions": ["*://*/*", "activeTab", "storage"],
+  "background": {
+    "scripts": ["src/background/background.ts"]
+  },
   "content_scripts": [
     {
       "matches": ["https://m.facebook.com/*"],

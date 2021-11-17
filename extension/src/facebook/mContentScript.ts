@@ -1,4 +1,4 @@
-import { FacebookFriend } from "../shared.types";
+import { FacebookFriend, RuntimeMessage } from "../shared.types";
 import { getState } from "../state";
 import { getByIdOrThrow } from "../utils";
 import { setFriends } from "./friends";
@@ -69,6 +69,10 @@ const captureAndSaveFriends = async () => {
 
   await setFriends(friends);
 
+  const port = browser.runtime.connect();
+  port.postMessage({ type: "pushToMonica" } as RuntimeMessage);
+  port.disconnect();
+
   globalThis.alert(`Your ${friends.length} friends have been saved. #PCw0RC`);
 };
 
@@ -128,7 +132,8 @@ const runLoop = async (doc: Document) => {
   // TODO: Improve this check
   if (!document.location.href.startsWith(facebookFriendsUrl)) {
     removePopOver(doc);
-    return;
+  } else {
+    insertPopOver(doc);
   }
 };
 

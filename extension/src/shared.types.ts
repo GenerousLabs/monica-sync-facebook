@@ -11,3 +11,7 @@ export type FacebookFriend = {
   profileUrl: string;
   name: string;
 };
+
+export type RuntimeMessage = {
+  type: "pushToMonica";
+};
