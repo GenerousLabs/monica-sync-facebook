@@ -67,7 +67,7 @@ const captureAndSaveFriends = async () => {
 
   await setFriends(friends);
 
-  globalThis.alert("Your friends have been saved. #PCw0RC");
+  globalThis.alert(`Your ${friends.length} friends have been saved. #PCw0RC`);
 };
 
 const createContainer = (doc: Document) => {
