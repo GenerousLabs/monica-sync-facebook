@@ -1,4 +1,5 @@
 import { syncFriendDataToMonica } from "../monica/monica";
+import { MBASIC_FACEBOOK_URL } from "../shared.constants";
 import {
   getState,
   setFacebookFriendsToScrape,
@@ -11,10 +12,6 @@ import {
   isAboutPage,
   isProfilePage,
 } from "./mbasicPageParsing";
-
-const MBASIC_FACEBOOK_URL = `https://mbasic.facebook.com/`;
-const STARTING_RATE_LIMIT_SECONDS = 7;
-const RATE_LIMIT_DELAY_BACKUP_MULTIPLIER = 3;
 
 const goToNextFriend = async ({ win }: { win: Window }) => {
   const { facebookFriendsToScrape } = await getState();
@@ -80,13 +77,16 @@ const mbasicStart = async (win: Window) => {
     const updatedFriend = await captureTableData({ friend, document });
     await markFriendAsScraped();
     await syncFriendDataToMonica({ friend: updatedFriend });
-    await randomDelay(5e3);
+    await delay(ABOUT_PAGE_FIXED_DELAY_MS);
+    await randomDelay(ABOUT_PAGE_RANDOM_DELAY_MS);
     await goToNextFriend({ win });
   } else if (isProfilePage({ friend, location })) {
-    await randomDelay(2e3);
+    await delay(PROFILE_PAGE_FIXED_DELAY_MS);
+    await randomDelay(PROFILE_PAGE_RANDOM_DELAY_MS);
     clickAboutLink(document);
   } else {
-    await randomDelay(3e3);
+    await delay(GETTING_STARTED_FIXED_DELAY_MS);
+    await randomDelay(GETTING_STARTED_RANDOM_DELAY_MS);
     await goToNextFriend({ win });
   }
 };
