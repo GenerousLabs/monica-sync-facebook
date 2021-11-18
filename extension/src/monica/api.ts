@@ -1,5 +1,11 @@
 import { setFriendMonicaId } from "../facebook/friends";
-import { FacebookFriend, MonicaFriend, State } from "../shared.types";
+import {
+  FacebookFriend,
+  MonicaContactField,
+  MonicaContactFieldType,
+  MonicaFriend,
+  State,
+} from "../shared.types";
 import { getState } from "../state";
 import { trimTrailingSlash } from "../utils";
 
@@ -94,7 +100,7 @@ export const sendMonicaRequest = async <ArrayOrSingle, DataType>({
   return body;
 };
 
-export const sendMonicaPostOrPutRequest = async ({
+export const sendMonicaPostOrPutRequest = async <ArrayOrSingle, DataType>({
   monicaParams,
   url,
   method,
@@ -104,7 +110,7 @@ export const sendMonicaPostOrPutRequest = async ({
   url: string;
   method: "post" | "put";
   body: any;
-}) => {
+}): Promise<MonicaResponse<ArrayOrSingle, DataType>> => {
   const opts: RequestInit = {
     method,
     headers: {
@@ -162,13 +168,36 @@ export const getMonicaFriendById = async ({
   throw new Error(`FATAL: Could not get monica friend id ${id} #en4CUQ`);
 };
 
+const getFacebookContactFieldTypeId = async ({
+  monicaParams,
+}: {
+  monicaParams?: MonicaParams;
+}): Promise<number> => {
+  const url = "/contactfieldtypes";
+  const result = await sendMonicaRequest<
+    MonicaArrayResponse<MonicaContactFieldType>,
+    MonicaContactFieldType
+  >({ monicaParams, url });
+  const contactFieldType = result.data.find(
+    (field) => field.name.toLowerCase() === "facebook"
+  );
+  if (typeof contactFieldType === "undefined") {
+    // TODO Create the contact field type
+    throw new Error(
+      "FATAL: Missing facebook contact field type on monica #e05BL4"
+    );
+  }
+  const { id } = contactFieldType;
+  return id;
+};
+
 export const createFriendOnMonica = async ({
   monicaParams,
   friend,
 }: {
   monicaParams?: MonicaParams;
   friend: FacebookFriend;
-}): Promise<MonicaFriend> => {
+}) => {
   const { name } = friend;
   const url = `/contacts`;
 
@@ -203,6 +232,26 @@ export const createFriendOnMonica = async ({
   const { id } = monicaFriend;
 
   await setFriendMonicaId({ friend, id });
+
+  const contact_field_type_id = await getFacebookContactFieldTypeId({
+    monicaParams,
+  });
+
+  const profileUrl = `/contactfields`;
+  const profileBody = {
+    contact_id: id,
+    data: friend.profileUrl,
+    contact_field_type_id,
+  };
+  await sendMonicaPostOrPutRequest<
+    MonicaSingleResponse<MonicaContactField>,
+    MonicaContactField
+  >({
+    monicaParams,
+    url: profileUrl,
+    body: profileBody,
+    method: "post",
+  });
 
   return monicaFriend;
 };

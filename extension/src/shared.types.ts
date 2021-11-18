@@ -11,7 +11,32 @@ export type FacebookFriend = {
 type MonicaAccount = {
   id: number;
 };
-type MonicaAddress = {
+export type MonicaContactFieldType = {
+  account: MonicaAccount;
+  created_at: string;
+  delible: boolean;
+  fontawesome_icon: string;
+  id: number;
+  name: string;
+  object: "contactfieldtype";
+  protocol: string;
+  type: string | null;
+  updated_at: string;
+};
+export type MonicaContactField = {
+  account: MonicaAccount;
+  contact: {};
+  contact_field_type: MonicaContactFieldType;
+  // TODO Is this content or data? Docs say data but I saw content from the API
+  content: string;
+  data: string;
+  created_at: string;
+  id: number;
+  labels: [];
+  object: string;
+  updated_at: string;
+};
+export type MonicaAddress = {
   id: number;
   object: "address";
   name: string | null;
@@ -33,28 +58,7 @@ export type MonicaFriend = {
   };
   addresses: MonicaAddress[];
   complete_name: string;
-  contact_fields: {
-    account: MonicaAccount;
-    contact: {};
-    contact_field_type: {
-      account: MonicaAccount;
-      created_at: string;
-      delible: boolean;
-      fontawesome_icon: string;
-      id: number;
-      name: string;
-      object: string;
-      protocol: string;
-      type: string | null;
-      updated_at: string;
-    };
-    content: string;
-    created_at: string;
-    id: number;
-    labels: [];
-    object: string;
-    updated_at: string;
-  }[];
+  contact_fields: MonicaContactField[];
   created_at: string;
   description: string | null;
   first_name: string;
