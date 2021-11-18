@@ -84,6 +84,11 @@ const bindButtons = (doc: Document) => {
   try {
     getByIdOrThrow(doc, "stopFriendScraping").onclick = stopFriendScraping;
   } catch (error) {}
+  try {
+    getByIdOrThrow(doc, "openOptions").onclick = () => {
+      browser.runtime.openOptionsPage();
+    };
+  } catch (error) {}
 };
 
 const insertStats = async (doc: Document) => {
