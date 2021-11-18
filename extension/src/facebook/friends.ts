@@ -1,3 +1,8 @@
+import { createFriendOnMonica } from "../monica/api";
+import {
+  getFriendFromMonicaByFacebookProfile,
+  syncFriendDataToMonica,
+} from "../monica/monica";
 import { FacebookFriend } from "../shared.types";
 
 const FRIENDS_KEY = "__facebookFriends";
@@ -46,5 +51,16 @@ export const setFriendTableData = async ({
 }) => {
   const tableData = { data, updatedAtMs: Date.now() };
   const updatedFriend = { ...friend, tableData };
+  await setFriend(updatedFriend);
+};
+
+export const setFriendMonicaId = async ({
+  friend,
+  id,
+}: {
+  friend: FacebookFriend;
+  id: number;
+}) => {
+  const updatedFriend = { ...friend, monicaId: id };
   await setFriend(updatedFriend);
 };

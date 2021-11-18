@@ -1,6 +1,7 @@
-import { FacebookFriend } from "../shared.types";
+import { syncFriendDataToMonica } from "../monica/monica";
 import { getState, setFacebookFriendsToScrape } from "../state";
 import { randomDelay } from "../utils";
+import { getFriends } from "./friends";
 import { captureTableData } from "./mbasicAboutPageScraping";
 import {
   clickAboutLink,
@@ -9,6 +10,20 @@ import {
 } from "./mbasicPageParsing";
 
 const MBASIC_FACEBOOK_URL = `https://mbasic.facebook.com/`;
+
+if (globalThis.confirm("Run TEMPORARY test? #yi85uh")) {
+  (async () => {
+    const friends = await getFriends();
+    const friend = friends.find(
+      (f) => globalThis.window.location.href.indexOf(f.profileUrl) !== -1
+    );
+    if (typeof friend === "undefined") {
+      globalThis.alert("Cannot find current friend #BtVl3b");
+      return;
+    }
+    await syncFriendDataToMonica({ friend });
+  })();
+}
 
 const goToNextFriend = async ({ win }: { win: Window }) => {
   const { facebookFriendsToScrape } = await getState();

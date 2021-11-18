@@ -1,3 +1,5 @@
+import { MONICA_COUNTRIES } from "./shared.constants";
+
 export const getByIdOrThrow = (doc: Document, id: string) => {
   const element = doc.getElementById(id);
   if (element === null) {
@@ -29,4 +31,17 @@ export const trimLeadingSlash = (input: string) => {
 
 export const trimTrailingAndLeadingSlash = (input: string) => {
   return trimLeadingSlash(trimTrailingSlash(input));
+};
+
+export const getMonicaCountryCode = (countryName: string) => {
+  const countries = Object.entries(MONICA_COUNTRIES);
+  const country = countries.find(
+    ([, { name }]) => name.toLowerCase() === countryName.toLowerCase()
+  );
+  if (typeof country === "undefined") {
+    return;
+  }
+  const [, data] = country;
+  const { id } = data;
+  return id;
 };
