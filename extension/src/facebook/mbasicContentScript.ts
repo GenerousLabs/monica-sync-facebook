@@ -1,4 +1,15 @@
+import { addLogLine } from "../shared.log";
 import { syncFriendDataToMonica } from "../monica/monica";
+import {
+  ABOUT_PAGE_FIXED_DELAY_MS,
+  ABOUT_PAGE_RANDOM_DELAY_MS,
+  GETTING_STARTED_FIXED_DELAY_MS,
+  GETTING_STARTED_RANDOM_DELAY_MS,
+  PROFILE_PAGE_FIXED_DELAY_MS,
+  PROFILE_PAGE_RANDOM_DELAY_MS,
+  RATE_LIMIT_DELAY_BACKUP_MULTIPLIER,
+  STARTING_RATE_LIMIT_SECONDS,
+} from "../shared.config";
 import { MBASIC_FACEBOOK_URL } from "../shared.constants";
 import {
   getState,
@@ -36,10 +47,22 @@ const isRateLimitingPage = (doc: Document) => {
     (h2) =>
       h2.innerText.toLowerCase() === "you can't use this feature right now"
   );
-  if (typeof rateLimitHeading === "undefined") {
-    return false;
+  if (typeof rateLimitHeading !== "undefined") {
+    return true;
   }
-  return true;
+
+  const strongs = doc.getElementsByTagName("strong");
+  const strongsArray = Array.from(strongs);
+  const strong = strongsArray.find(
+    (strong) =>
+      strong.innerText.toLowerCase().indexOf("something went wrong") !== -1
+  );
+  if (typeof strong !== "undefined") {
+    debugger;
+    return true;
+  }
+
+  return false;
 };
 
 const mbasicStart = async (win: Window) => {
@@ -74,6 +97,7 @@ const mbasicStart = async (win: Window) => {
   //    - remove them from the list to be scraped
   //    - click to the next friend's profile page
   if (isAboutPage({ friend, location })) {
+    await addLogLine(`Found about page #x1gM8O. Friend: ${friend.profileUrl}`);
     const updatedFriend = await captureTableData({ friend, document });
     await markFriendAsScraped();
     await syncFriendDataToMonica({ friend: updatedFriend });
@@ -81,10 +105,14 @@ const mbasicStart = async (win: Window) => {
     await randomDelay(ABOUT_PAGE_RANDOM_DELAY_MS);
     await goToNextFriend({ win });
   } else if (isProfilePage({ friend, location })) {
+    await addLogLine(
+      `Found profile page #wtOPrK. Friend: ${friend.profileUrl}`
+    );
     await delay(PROFILE_PAGE_FIXED_DELAY_MS);
     await randomDelay(PROFILE_PAGE_RANDOM_DELAY_MS);
     clickAboutLink(document);
   } else {
+    await addLogLine(`Starting crawl. #6zOw4E`);
     await delay(GETTING_STARTED_FIXED_DELAY_MS);
     await randomDelay(GETTING_STARTED_RANDOM_DELAY_MS);
     await goToNextFriend({ win });
