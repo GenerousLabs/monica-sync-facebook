@@ -1,5 +1,5 @@
 import { getFriends } from "../facebook/friends";
-import { M_FACEBOOK_URL } from "../shared.constants";
+import { MBASIC_FACEBOOK_URL } from "../shared.constants";
 import {
   getState,
   setFacebookFriendsToScrape,
@@ -54,7 +54,7 @@ const startFriendScraping = async () => {
     if (typeof tab.url !== "string") {
       return false;
     }
-    return tab.url.startsWith(M_FACEBOOK_URL);
+    return tab.url.startsWith(MBASIC_FACEBOOK_URL);
   });
   if (typeof mFacebookTab !== "undefined") {
     globalThis.alert("Please close all m.facebook.com tabs first #r9ddVp");
@@ -67,7 +67,7 @@ const startFriendScraping = async () => {
     (friend) => typeof friend.tableData === "undefined"
   );
   await setFacebookFriendsToScrape(friendsToScrape);
-  browser.tabs.create({ active: true, url: M_FACEBOOK_URL });
+  browser.tabs.create({ active: true, url: MBASIC_FACEBOOK_URL });
 };
 
 const stopFriendScraping = async () => {
