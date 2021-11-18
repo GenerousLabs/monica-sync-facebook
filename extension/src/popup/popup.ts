@@ -114,10 +114,17 @@ const showScrapingStatus = async (doc: Document) => {
   }
 };
 
+const updatePopup = async (doc: Document) => {
+  await Promise.all([insertStats(doc), showScrapingStatus(doc)]);
+  return;
+};
+
 const popupStart = async (doc: Document) => {
   bindButtons(doc);
-  insertStats(doc);
-  showScrapingStatus(doc);
+  await updatePopup(doc);
+  globalThis.setInterval(async () => {
+    updatePopup(doc);
+  }, 1e3);
 };
 
 globalThis.setTimeout(() => {
