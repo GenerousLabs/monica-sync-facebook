@@ -103,12 +103,19 @@ export const updateMonicaLocation = async ({
 
   const monicaCountryCode = getMonicaCountryCode(country);
 
+  const countryOrProvince =
+    typeof monicaCountryCode !== "undefined"
+      ? {
+          country: monicaCountryCode,
+        }
+      : { province: country };
+
   if (typeof address === "undefined") {
     const url = `/addresses`;
     const body = {
+      ...countryOrProvince,
       name: MONICA_FACEBOOK_ADDRESS_NAME,
       city,
-      country: monicaCountryCode,
       contact_id: monicaFriend.id,
     };
     await sendMonicaPostOrPutRequest({
