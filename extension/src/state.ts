@@ -13,6 +13,19 @@ export const getState = async (): Promise<State> => {
   return state;
 };
 
+export const getMonicaParams = async () => {
+  const { monicaApiUrl, monicaApiToken } = await getState();
+
+  if (
+    typeof monicaApiUrl === "undefined" ||
+    typeof monicaApiToken === "undefined"
+  ) {
+    throw new Error("FATAL: Monica params not set #vXYPcZ");
+  }
+
+  return { monicaApiUrl, monicaApiToken };
+};
+
 const setState = async (state: State) => {
   const set = {
     [STATE_KEY]: state,

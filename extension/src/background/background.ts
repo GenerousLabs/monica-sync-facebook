@@ -1,3 +1,4 @@
+import { pushToMonica } from "../monica/monica";
 import { RuntimeMessage } from "../shared.types";
 
 const handleConnected = (port: browser.runtime.Port) => {
@@ -5,8 +6,7 @@ const handleConnected = (port: browser.runtime.Port) => {
     const { type } = message as RuntimeMessage;
 
     if (type === "pushToMonica") {
-      // Do something
-      console.log("Push to monica triggered #b2Znp1");
+      pushToMonica();
     }
   });
 };
