@@ -1,6 +1,4 @@
-import { getFriends } from "../facebook/friends";
 import { FacebookFriend, MonicaFriend } from "../shared.types";
-import { getMonicaParams } from "../state";
 import { getMonicaCountryCode } from "../utils";
 import {
   createFriendOnMonica,
