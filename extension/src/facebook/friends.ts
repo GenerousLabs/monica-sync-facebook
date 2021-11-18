@@ -36,3 +36,15 @@ export const setFriend = async (friend: FacebookFriend) => {
 
   await setFriends(updatedFriends);
 };
+
+export const setFriendTableData = async ({
+  friend,
+  data,
+}: {
+  friend: FacebookFriend;
+  data: Required<FacebookFriend>["tableData"]["data"];
+}) => {
+  const tableData = { data, updatedAtMs: Date.now() };
+  const updatedFriend = { ...friend, tableData };
+  await setFriend(updatedFriend);
+};

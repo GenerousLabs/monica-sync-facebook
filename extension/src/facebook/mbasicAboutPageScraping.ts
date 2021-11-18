@@ -1,5 +1,5 @@
 import { FacebookFriend } from "../shared.types";
-import { setFriend } from "./friends";
+import { setFriend, setFriendTableData } from "./friends";
 
 export const scrapeTableData = (doc: Document) => {
   const tables = doc.getElementsByTagName("table");
@@ -22,7 +22,6 @@ export const captureTableData = async ({
   friend: FacebookFriend;
   document: Document;
 }) => {
-  const tableData = scrapeTableData(document);
-  const updatedFriend = { ...friend, tableData };
-  await setFriend(updatedFriend);
+  const data = scrapeTableData(document);
+  await setFriendTableData({ friend, data });
 };
