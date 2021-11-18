@@ -1,7 +1,10 @@
 export type FacebookFriend = {
   profileUrl: string;
   name: string;
-  tableData?: { label: string; value: string }[];
+  tableData?: {
+    updatedAtMs: number;
+    data: { label: string; value: string }[];
+  };
 };
 
 export type State = {
