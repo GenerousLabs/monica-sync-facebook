@@ -10,7 +10,7 @@ export const getState = async (): Promise<State> => {
   if (typeof state === "undefined") {
     return empty;
   }
-  return state;
+  return { ...empty, ...state };
 };
 
 export const getMonicaParams = async () => {

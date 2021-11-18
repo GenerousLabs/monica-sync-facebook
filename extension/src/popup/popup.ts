@@ -76,18 +76,14 @@ const insertStats = async (doc: Document) => {
   } catch (error) {}
   try {
     const { facebookFriendsToScrape } = await getState();
-    getByIdOrThrow(doc, "friendsStillToScrape").innerText = (
-      facebookFriendsToScrape || []
-    ).length.toString();
+    getByIdOrThrow(doc, "friendsStillToScrape").innerText =
+      facebookFriendsToScrape.length.toString();
   } catch (error) {}
 };
 
 const showScrapingStatus = async (doc: Document) => {
   const { facebookFriendsToScrape } = await getState();
-  if (
-    typeof facebookFriendsToScrape === "undefined" ||
-    facebookFriendsToScrape.length === 0
-  ) {
+  if (facebookFriendsToScrape.length === 0) {
     getByIdOrThrow(doc, "noScrapeRunning").style.display = "block";
     getByIdOrThrow(doc, "scrapeIsRunning").style.display = "none";
   } else {

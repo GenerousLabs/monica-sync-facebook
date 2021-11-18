@@ -11,7 +11,7 @@ export type State = {
   /** The URL to the user's own Facebook friends list */
   facebookFriendsUrl?: string;
   /** Facebook friends to scrape for additional data */
-  facebookFriendsToScrape?: FacebookFriend[];
+  facebookFriendsToScrape: FacebookFriend[];
 };
 
 export type RuntimeMessage = {
