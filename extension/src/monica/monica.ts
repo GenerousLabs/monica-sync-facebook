@@ -134,7 +134,7 @@ export const updateMonicaLocation = async ({
   await sendMonicaPostOrPutRequest({
     monicaParams,
     url,
-    method: "post",
+    method: "put",
     body,
   });
 };
