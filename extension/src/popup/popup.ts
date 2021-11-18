@@ -1,3 +1,4 @@
+import { getFriends } from "../facebook/friends";
 import { setFacebookFriendsUrl } from "../state";
 import { getSanitisedFriendsListUrl } from "../urls";
 import { getByIdOrThrow } from "../utils";
@@ -46,8 +47,14 @@ const bindButtons = (doc: Document) => {
   getByIdOrThrow(doc, "scrapeFriendsList").onclick = startScrape;
 };
 
+const insertStats = async (doc: Document) => {
+  const friends = await getFriends();
+  getByIdOrThrow(doc, "friendCount").innerText = friends.length.toString();
+};
+
 const popupStart = async (doc: Document) => {
   bindButtons(doc);
+  insertStats(doc);
 };
 
 globalThis.setTimeout(() => {
