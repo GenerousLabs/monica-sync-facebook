@@ -1,5 +1,5 @@
 import { FacebookFriend } from "../shared.types";
-import { setFriend, setFriendTableData } from "./friends";
+import { setFriendTableData } from "./friends";
 
 export const scrapeTableData = (doc: Document) => {
   const tables = doc.getElementsByTagName("table");
