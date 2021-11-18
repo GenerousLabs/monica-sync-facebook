@@ -1,7 +1,6 @@
 import { syncFriendDataToMonica } from "../monica/monica";
 import { getState, setFacebookFriendsToScrape } from "../state";
 import { randomDelay } from "../utils";
-import { getFriends } from "./friends";
 import { captureTableData } from "./mbasicAboutPageScraping";
 import {
   clickAboutLink,
@@ -42,9 +41,9 @@ const mbasicStart = async (win: Window) => {
   //    - remove them from the list to be scraped
   //    - click to the next friend's profile page
   if (isAboutPage({ friend, location })) {
-    await captureTableData({ friend, document });
+    const updatedFriend = await captureTableData({ friend, document });
     await markFriendAsScraped();
-    await syncFriendDataToMonica({ friend });
+    await syncFriendDataToMonica({ friend: updatedFriend });
     await randomDelay(5e3);
     await goToNextFriend({ win });
   } else if (isProfilePage({ friend, location })) {

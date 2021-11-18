@@ -47,6 +47,7 @@ export const setFriendTableData = async ({
   const tableData = { data, updatedAtMs: Date.now() };
   const updatedFriend = { ...friend, tableData };
   await setFriend(updatedFriend);
+  return updatedFriend;
 };
 
 export const setFriendMonicaId = async ({

@@ -23,5 +23,6 @@ export const captureTableData = async ({
   document: Document;
 }) => {
   const data = scrapeTableData(document);
-  await setFriendTableData({ friend, data });
+  const updatedFriend = await setFriendTableData({ friend, data });
+  return updatedFriend;
 };
