@@ -50,6 +50,11 @@ const startFriendCapture = async () => {
 const startFriendScraping = async () => {
   const friends = await getFriends();
   await setFacebookFriendsToScrape(friends);
+  browser.tabs.create({ active: true, url: `https://mbasic.facebook.com/` });
+};
+
+const stopFriendScraping = async () => {
+  await setFacebookFriendsToScrape([]);
 };
 
 const bindButtons = (doc: Document) => {
@@ -58,6 +63,9 @@ const bindButtons = (doc: Document) => {
   } catch (error) {}
   try {
     getByIdOrThrow(doc, "scrapeFriendData").onclick = startFriendScraping;
+  } catch (error) {}
+  try {
+    getByIdOrThrow(doc, "stopFriendScraping").onclick = stopFriendScraping;
   } catch (error) {}
 };
 
