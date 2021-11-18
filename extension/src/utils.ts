@@ -1,11 +1,14 @@
 import { MONICA_COUNTRIES } from "./shared.constants";
 
-export const getByIdOrThrow = (doc: Document, id: string) => {
+export const getByIdOrThrow = <T extends HTMLElement>(
+  doc: Document,
+  id: string
+) => {
   const element = doc.getElementById(id);
   if (element === null) {
     throw new Error(`FATAL: Failed to get element with id ${id} #JRfO9v`);
   }
-  return element;
+  return element as T;
 };
 
 export const randomDelay = (maxMs: number) => {
