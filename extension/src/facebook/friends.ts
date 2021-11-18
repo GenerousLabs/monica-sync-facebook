@@ -19,3 +19,20 @@ export const setFriends = async (friends: FacebookFriend[]) => {
   };
   await browser.storage.local.set(set);
 };
+
+export const setFriend = async (friend: FacebookFriend) => {
+  const friends = await getFriends();
+
+  const friendEntries = friends.map((friend) => [friend.profileUrl, friend]);
+  const friendsMap = Object.fromEntries(friendEntries) as {
+    [profileUrl: string]: FacebookFriend;
+  };
+
+  const updatedFriendMap = { ...friendsMap, [friend.profileUrl]: friend };
+
+  const keys = Object.keys(updatedFriendMap);
+
+  const updatedFriends = keys.map((key) => updatedFriendMap[key]);
+
+  await setFriends(updatedFriends);
+};

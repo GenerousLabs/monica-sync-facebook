@@ -1,4 +1,7 @@
-export const captureTableData = (doc: Document) => {
+import { FacebookFriend } from "../shared.types";
+import { setFriend } from "./friends";
+
+export const scrapeTableData = (doc: Document) => {
   const tables = doc.getElementsByTagName("table");
   const tablesArray = Array.from(tables);
   const dataTables = tablesArray.filter(
@@ -10,4 +13,16 @@ export const captureTableData = (doc: Document) => {
     return { label, value };
   });
   return dataPairs;
+};
+
+export const captureTableData = async ({
+  friend,
+  document,
+}: {
+  friend: FacebookFriend;
+  document: Document;
+}) => {
+  const tableData = scrapeTableData(document);
+  const updatedFriend = { ...friend, tableData };
+  await setFriend(updatedFriend);
 };

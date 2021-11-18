@@ -1,5 +1,5 @@
 import { FacebookFriend } from "../shared.types";
-import { getState } from "../state";
+import { getState, setFacebookFriendsToScrape } from "../state";
 import { randomDelay } from "../utils";
 import { captureTableData } from "./mbasicAboutPageScraping";
 import {
@@ -10,15 +10,20 @@ import {
 
 const MBASIC_FACEBOOK_URL = `https://mbasic.facebook.com/`;
 
-const goToNextFriend = async ({
-  friend,
-  win,
-}: {
-  friend: FacebookFriend;
-  win: Window;
-}) => {
+const goToNextFriend = async ({ win }: { win: Window }) => {
+  const { facebookFriendsToScrape } = await getState();
+  if (facebookFriendsToScrape.length === 0) {
+    return;
+  }
+  const friend = facebookFriendsToScrape[0];
   const url = `${MBASIC_FACEBOOK_URL}${friend.profileUrl}`;
   win.location.href = url;
+};
+
+const markFriendAsScraped = async () => {
+  const { facebookFriendsToScrape } = await getState();
+  const updated = facebookFriendsToScrape.slice(1);
+  await setFacebookFriendsToScrape(updated);
 };
 
 const mbasicStart = async (win: Window) => {
@@ -36,14 +41,16 @@ const mbasicStart = async (win: Window) => {
   //    - remove them from the list to be scraped
   //    - click to the next friend's profile page
   if (isAboutPage({ friend, location })) {
-    captureTableData(document);
-    globalThis.alert("Implement this #CbXtvL");
+    await captureTableData({ friend, document });
+    await markFriendAsScraped();
+    await randomDelay(5e3);
+    await goToNextFriend({ win });
   } else if (isProfilePage({ friend, location })) {
     await randomDelay(2e3);
     clickAboutLink(document);
   } else {
     await randomDelay(3e3);
-    goToNextFriend({ friend, win });
+    await goToNextFriend({ win });
   }
 };
 
