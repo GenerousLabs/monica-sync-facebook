@@ -1,5 +1,5 @@
 import { FacebookFriend } from "../shared.types";
-import { trimTrailingAndLeadingSlash, trimTrailingSlash } from "../utils";
+import { trimTrailingAndLeadingSlash } from "../utils";
 
 const searchContainsProfileId = (search: string) => {
   if (search.match(/id=[0-9]+/)) {
