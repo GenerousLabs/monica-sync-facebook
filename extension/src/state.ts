@@ -1,8 +1,8 @@
-import { State } from "./shared.types";
+import { FacebookFriend, State } from "./shared.types";
 
 const STATE_KEY = "__state";
 
-const empty: State = {};
+const empty: State = { facebookFriendsToScrape: [] };
 
 export const getState = async (): Promise<State> => {
   const result = await browser.storage.local.get(STATE_KEY);
@@ -52,5 +52,13 @@ export const setFacebookFriendsUrl = async ({
 }) => {
   const state = await getState();
   const newState = { ...state, facebookFriendsUrl };
+  await setState(newState);
+};
+
+export const setFacebookFriendsToScrape = async (
+  facebookFriendsToScrape: FacebookFriend[]
+) => {
+  const state = await getState();
+  const newState = { ...state, facebookFriendsToScrape };
   await setState(newState);
 };

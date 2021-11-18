@@ -1,3 +1,8 @@
+export type FacebookFriend = {
+  profileUrl: string;
+  name: string;
+};
+
 export type State = {
   /** The API url of the user's monica instance */
   monicaApiUrl?: string;
@@ -5,11 +10,8 @@ export type State = {
   monicaApiToken?: string;
   /** The URL to the user's own Facebook friends list */
   facebookFriendsUrl?: string;
-};
-
-export type FacebookFriend = {
-  profileUrl: string;
-  name: string;
+  /** Facebook friends to scrape for additional data */
+  facebookFriendsToScrape?: FacebookFriend[];
 };
 
 export type RuntimeMessage = {
