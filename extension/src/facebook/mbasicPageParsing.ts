@@ -1,9 +1,5 @@
-const trimTrailingSlash = (input: string) => {
-  if (input.substr(-1) === "/") {
-    return input.substr(0, input.length - 1);
-  }
-  return input;
-};
+import { FacebookFriend } from "../shared.types";
+import { trimTrailingAndLeadingSlash, trimTrailingSlash } from "../utils";
 
 const searchContainsProfileId = (search: string) => {
   if (search.match(/id=[0-9]+/)) {
@@ -19,38 +15,60 @@ const searchMatchesAboutPage = (search: string) => {
   return false;
 };
 
-export const isProfilePage = (location: Location) => {
+export const isProfilePage = ({
+  friend,
+  location,
+}: {
+  friend: FacebookFriend;
+  location: Location;
+}) => {
   const { search } = location;
+  const { profileUrl } = friend;
 
-  const pathname = trimTrailingSlash(location.pathname);
+  const pathname = trimTrailingAndLeadingSlash(location.pathname);
 
-  // URLs like `/profile.php?id=00000`
-  if (pathname === "/profile.php") {
+  // NOTE: This will match for username URLs like `/chmac` but not for profiles
+  // without a username like `/profile.php?id=0000`
+  if (pathname === profileUrl) {
+    return true;
+  }
+
+  // URLs like `profile.php?id=00000`
+  if (pathname === "profile.php") {
     // NOTE: A URL of this type will be `profile.php?id=000` without `v=info`
     if (searchContainsProfileId(search) && !searchMatchesAboutPage(search)) {
       return true;
     }
-    // URLs like `/user.id` without any trailing parts (like `/user.id/about`)
-  } else if (pathname.match(/^\/[0-9a-zA-Z\.]+$/)) {
-    return true;
   }
+
   return false;
 };
 
-export const isAboutPage = (location: Location) => {
+export const isAboutPage = ({
+  friend,
+  location,
+}: {
+  friend: FacebookFriend;
+  location: Location;
+}) => {
+  const { profileUrl } = friend;
   const { search } = location;
 
-  const pathname = trimTrailingSlash(location.pathname);
+  const pathname = trimTrailingAndLeadingSlash(location.pathname);
 
-  // URLs like `/profile.php?id=00000`
-  if (pathname === "/profile.php") {
-    // NOTE: A URL of this type will be `profile.php?id=000` WITH `v=info`
-    if (searchContainsProfileId(search) && searchMatchesAboutPage(search)) {
-      return true;
-    }
-    // URLs that end in `/about`, note that this does not guarantee that the URL
-    // represents an individual, pages also have a `/about` subpage.
-  } else if (pathname.match(/about$/)) {
+  // URLs like `profile.php?id=00000`
+  // NOTE: A URL of this type will be `profile.php?id=000` WITH `v=info`
+  if (
+    pathname === "profile.php" &&
+    searchContainsProfileId(search) &&
+    searchMatchesAboutPage(search)
+  ) {
+    return true;
+  }
+
+  // URLs that end in `/about`, note that this does not guarantee that the URL
+  // represents an individual, pages also have a `/about` subpage.
+  if (pathname.startsWith(profileUrl) && pathname.match(/about$/)) {
     return true;
   }
 

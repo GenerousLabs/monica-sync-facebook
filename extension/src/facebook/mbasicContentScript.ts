@@ -1,5 +1,6 @@
 import { FacebookFriend } from "../shared.types";
 import { getState } from "../state";
+import { randomDelay } from "../utils";
 import {
   clickAboutLink,
   isAboutPage,
@@ -20,6 +21,8 @@ const goToNextFriend = async ({
 };
 
 const mbasicStart = async (win: Window) => {
+  const { location } = win;
+
   const { facebookFriendsToScrape } = await getState();
   if (facebookFriendsToScrape.length === 0) {
     return;
@@ -31,11 +34,13 @@ const mbasicStart = async (win: Window) => {
   //    - then capture their data
   //    - remove them from the list to be scraped
   //    - click to the next friend's profile page
-  if (isAboutPage(win.location)) {
+  if (isAboutPage({ friend, location })) {
     globalThis.alert("Ready to scrape #CbXtvL");
-  } else if (isProfilePage(win.location)) {
+  } else if (isProfilePage({ friend, location })) {
+    await randomDelay(2e3);
     clickAboutLink(win.document);
   } else {
+    await randomDelay(3e3);
     goToNextFriend({ friend, win });
   }
 };
