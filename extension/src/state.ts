@@ -1,3 +1,4 @@
+import { addLogLine } from "./shared.log";
 import { FacebookFriend, State } from "./shared.types";
 
 const STATE_KEY = "__state";
@@ -70,4 +71,7 @@ export const setRateLimitDelay = async (rateLimitingDelaySeconds: number) => {
   const state = await getState();
   const newState = { ...state, rateLimitingDelaySeconds } as State;
   await setState(newState);
+  await addLogLine(
+    `Setting rateLimitingDelaySeconds to ${rateLimitingDelaySeconds} seconds. #oPFn1K`
+  );
 };

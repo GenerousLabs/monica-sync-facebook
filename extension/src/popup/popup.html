@@ -14,13 +14,23 @@
       <div id="noScrapeRunning" style="display: none">
         <p>You are not currently scraping data from Facebook</p>
         <p>
-          <button id="scrapeFriendData">Start scraping Facebook data</button>
+          <button id="scrapeFriendData" style="background-color: lightgreen">
+            Start scraping Facebook data
+          </button>
         </p>
       </div>
       <div id="scrapeIsRunning" style="display: none">
         <p>You are currently scraping Facebook friend data</p>
         <p>Friends still to scrape: <span id="friendsStillToScrape"></span></p>
-        <p><button id="stopFriendScraping">Stop scraping friends</button></p>
+        <p id="beingRateLimitedTrue" style="display: none">
+          You are currently being rate limited by facebook. We're waiting
+          <span id="rateLimitingDelaySeconds"></span> until we try again.
+        </p>
+        <p>
+          <button id="stopFriendScraping" style="background-color: lightcoral">
+            Stop scraping friends
+          </button>
+        </p>
       </div>
       <p>
         <button id="openOptions">Open options page</button>

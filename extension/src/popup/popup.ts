@@ -92,14 +92,29 @@ const bindButtons = (doc: Document) => {
 };
 
 const insertStats = async (doc: Document) => {
+  const friends = await getFriends();
+  const { facebookFriendsToScrape, rateLimitingDelaySeconds } =
+    await getState();
+  const isRateLimiting = rateLimitingDelaySeconds !== 0;
   try {
-    const friends = await getFriends();
     getByIdOrThrow(doc, "friendCount").innerText = friends.length.toString();
   } catch (error) {}
   try {
-    const { facebookFriendsToScrape } = await getState();
-    getByIdOrThrow(doc, "friendsStillToScrape").innerText =
-      facebookFriendsToScrape.length.toString();
+    getByIdOrThrow(
+      doc,
+      "friendsStillToScrape"
+    ).innerText = `${facebookFriendsToScrape.length.toString()} (${(
+      friends.length - facebookFriendsToScrape.length
+    ).toString()})`;
+  } catch (error) {}
+  try {
+    getByIdOrThrow(doc, "beingRateLimitedTrue").style.display = isRateLimiting
+      ? "block"
+      : "none";
+  } catch (error) {}
+  try {
+    getByIdOrThrow(doc, "rateLimitingDelaySeconds").innerText =
+      rateLimitingDelaySeconds.toString();
   } catch (error) {}
 };
 
