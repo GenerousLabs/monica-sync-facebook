@@ -3,7 +3,7 @@
   "name": "monica-sync-facebook",
   "version": "0.1",
 
-  "permissions": ["*://*/*", "activeTab", "storage"],
+  "permissions": ["*://*/*", "activeTab", "storage", "tabs"],
   "background": {
     "scripts": ["src/background/background.ts"]
   },

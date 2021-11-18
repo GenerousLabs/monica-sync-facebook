@@ -1,4 +1,5 @@
 import { getFriends } from "../facebook/friends";
+import { M_FACEBOOK_URL } from "../shared.constants";
 import {
   getState,
   setFacebookFriendsToScrape,
@@ -48,13 +49,25 @@ const startFriendCapture = async () => {
 };
 
 const startFriendScraping = async () => {
+  const tabs = await browser.tabs.query({});
+  const mFacebookTab = tabs.find((tab) => {
+    if (typeof tab.url !== "string") {
+      return false;
+    }
+    return tab.url.startsWith(M_FACEBOOK_URL);
+  });
+  if (typeof mFacebookTab !== "undefined") {
+    globalThis.alert("Please close all m.facebook.com tabs first #r9ddVp");
+    return;
+  }
+
   const friends = await getFriends();
   // Skip all friends who already have a `tableData` property
   const friendsToScrape = friends.filter(
     (friend) => typeof friend.tableData === "undefined"
   );
   await setFacebookFriendsToScrape(friendsToScrape);
-  browser.tabs.create({ active: true, url: `https://mbasic.facebook.com/` });
+  browser.tabs.create({ active: true, url: M_FACEBOOK_URL });
 };
 
 const stopFriendScraping = async () => {

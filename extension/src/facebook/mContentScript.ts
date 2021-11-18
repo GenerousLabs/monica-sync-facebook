@@ -1,9 +1,9 @@
+import { M_FACEBOOK_URL } from "../shared.constants";
 import { FacebookFriend, RuntimeMessage } from "../shared.types";
 import { getState } from "../state";
 import { getByIdOrThrow } from "../utils";
 import { setFriends } from "./friends";
 
-const M_FACEBOOK_URL = "https://m.facebook.com/";
 const POPOVER_DIV_ID = "monicaSyncFacebookPopover";
 
 const scrollToTheBottom = async () => {
