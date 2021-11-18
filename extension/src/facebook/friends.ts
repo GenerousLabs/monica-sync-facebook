@@ -1,8 +1,3 @@
-import { createFriendOnMonica } from "../monica/api";
-import {
-  getFriendFromMonicaByFacebookProfile,
-  syncFriendDataToMonica,
-} from "../monica/monica";
 import { FacebookFriend } from "../shared.types";
 
 const FRIENDS_KEY = "__facebookFriends";
