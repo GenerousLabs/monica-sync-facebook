@@ -3,6 +3,7 @@ import { getState } from "../state";
 import { getByIdOrThrow } from "../utils";
 import { setFriends } from "./friends";
 
+const M_FACEBOOK_URL = "https://m.facebook.com/";
 const POPOVER_DIV_ID = "monicaSyncFacebookPopover";
 
 const scrollToTheBottom = async () => {
@@ -33,6 +34,14 @@ const scrollToTheBottom = async () => {
   });
 };
 
+const stripFacebookCom = (url?: string) => {
+  if (typeof url === "undefined" || !url.startsWith(M_FACEBOOK_URL)) {
+    return url;
+  }
+  const newUrl = url.replace(M_FACEBOOK_URL, "");
+  return newUrl;
+};
+
 const captureFriends = (doc: Document) => {
   // Facebook uses a mixture of h3 and h1 tags, the h3 are loaded first and the
   // h1 are loaded via infinite scroll.
@@ -45,7 +54,8 @@ const captureFriends = (doc: Document) => {
     if (heading.firstChild === null) {
       return;
     }
-    const profileUrl = (heading.firstChild as HTMLLinkElement).href;
+    const fullProfileUrl = (heading.firstChild as HTMLLinkElement).href;
+    const profileUrl = stripFacebookCom(fullProfileUrl);
     const name = heading.innerText;
     return { profileUrl, name };
   });
