@@ -11,20 +11,6 @@ import {
 
 const MBASIC_FACEBOOK_URL = `https://mbasic.facebook.com/`;
 
-if (globalThis.confirm("Run TEMPORARY test? #yi85uh")) {
-  (async () => {
-    const friends = await getFriends();
-    const friend = friends.find(
-      (f) => globalThis.window.location.href.indexOf(f.profileUrl) !== -1
-    );
-    if (typeof friend === "undefined") {
-      globalThis.alert("Cannot find current friend #BtVl3b");
-      return;
-    }
-    await syncFriendDataToMonica({ friend });
-  })();
-}
-
 const goToNextFriend = async ({ win }: { win: Window }) => {
   const { facebookFriendsToScrape } = await getState();
   if (facebookFriendsToScrape.length === 0) {
@@ -58,6 +44,7 @@ const mbasicStart = async (win: Window) => {
   if (isAboutPage({ friend, location })) {
     await captureTableData({ friend, document });
     await markFriendAsScraped();
+    await syncFriendDataToMonica({ friend });
     await randomDelay(5e3);
     await goToNextFriend({ win });
   } else if (isProfilePage({ friend, location })) {
