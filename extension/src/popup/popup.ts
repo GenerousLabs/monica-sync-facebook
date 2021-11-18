@@ -49,7 +49,11 @@ const startFriendCapture = async () => {
 
 const startFriendScraping = async () => {
   const friends = await getFriends();
-  await setFacebookFriendsToScrape(friends);
+  // Skip all friends who already have a `tableData` property
+  const friendsToScrape = friends.filter(
+    (friend) => typeof friend.tableData === "undefined"
+  );
+  await setFacebookFriendsToScrape(friendsToScrape);
   browser.tabs.create({ active: true, url: `https://mbasic.facebook.com/` });
 };
 
