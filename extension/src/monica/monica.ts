@@ -10,30 +10,6 @@ import {
 
 const MONICA_FACEBOOK_ADDRESS_NAME = "Facebook";
 
-const monicaPostFriend = async ({
-  friend,
-}: {
-  monicaParams: MonicaParams;
-  friend: FacebookFriend;
-}) => {
-  //
-};
-
-const monicaPutFriend = async ({
-  monicaParams: { monicaApiUrl, monicaApiToken },
-  friend,
-  monicaFriend,
-}: {
-  monicaParams: MonicaParams;
-  friend: FacebookFriend;
-  monicaFriend: object;
-}) => {
-  const { id } = monicaFriend as { id: string };
-  const url = `${monicaApiUrl}/contacts/${id}`;
-  const response = fetch(url);
-  // Do something
-};
-
 const getMonicaFriendId = async ({
   monicaParams,
   friend,
