@@ -2,7 +2,10 @@ import { FacebookFriend, State } from "./shared.types";
 
 const STATE_KEY = "__state";
 
-const empty: State = { facebookFriendsToScrape: [] };
+const empty: State = {
+  facebookFriendsToScrape: [],
+  rateLimitingDelaySeconds: 0,
+};
 
 export const getState = async (): Promise<State> => {
   const result = await browser.storage.local.get(STATE_KEY);
@@ -41,7 +44,7 @@ export const setMonicaUrlAndToken = async ({
   monicaApiToken: string;
 }) => {
   const state = await getState();
-  const newState = { ...state, monicaApiToken, monicaApiUrl };
+  const newState = { ...state, monicaApiToken, monicaApiUrl } as State;
   await setState(newState);
 };
 
@@ -51,7 +54,7 @@ export const setFacebookFriendsUrl = async ({
   facebookFriendsUrl: string;
 }) => {
   const state = await getState();
-  const newState = { ...state, facebookFriendsUrl };
+  const newState = { ...state, facebookFriendsUrl } as State;
   await setState(newState);
 };
 
@@ -59,6 +62,12 @@ export const setFacebookFriendsToScrape = async (
   facebookFriendsToScrape: FacebookFriend[]
 ) => {
   const state = await getState();
-  const newState = { ...state, facebookFriendsToScrape };
+  const newState = { ...state, facebookFriendsToScrape } as State;
+  await setState(newState);
+};
+
+export const setRateLimitDelay = async (rateLimitingDelaySeconds: number) => {
+  const state = await getState();
+  const newState = { ...state, rateLimitingDelaySeconds } as State;
   await setState(newState);
 };

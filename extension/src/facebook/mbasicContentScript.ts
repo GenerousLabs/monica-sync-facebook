@@ -1,6 +1,10 @@
 import { syncFriendDataToMonica } from "../monica/monica";
-import { getState, setFacebookFriendsToScrape } from "../state";
-import { randomDelay } from "../utils";
+import {
+  getState,
+  setFacebookFriendsToScrape,
+  setRateLimitDelay,
+} from "../state";
+import { delay, randomDelay } from "../utils";
 import { captureTableData } from "./mbasicAboutPageScraping";
 import {
   clickAboutLink,
@@ -9,6 +13,8 @@ import {
 } from "./mbasicPageParsing";
 
 const MBASIC_FACEBOOK_URL = `https://mbasic.facebook.com/`;
+const STARTING_RATE_LIMIT_SECONDS = 7;
+const RATE_LIMIT_DELAY_BACKUP_MULTIPLIER = 3;
 
 const goToNextFriend = async ({ win }: { win: Window }) => {
   const { facebookFriendsToScrape } = await getState();
@@ -26,12 +32,42 @@ const markFriendAsScraped = async () => {
   await setFacebookFriendsToScrape(updated);
 };
 
+const isRateLimitingPage = (doc: Document) => {
+  const h2s = doc.getElementsByTagName("h2");
+  const h2sArray = Array.from(h2s);
+  const rateLimitHeading = h2sArray.find(
+    (h2) =>
+      h2.innerText.toLowerCase() === "you can't use this feature right now"
+  );
+  if (typeof rateLimitHeading === "undefined") {
+    return false;
+  }
+  return true;
+};
+
 const mbasicStart = async (win: Window) => {
   const { location, document } = win;
 
-  const { facebookFriendsToScrape } = await getState();
+  const { facebookFriendsToScrape, rateLimitingDelaySeconds } =
+    await getState();
   if (facebookFriendsToScrape.length === 0) {
     return;
+  }
+
+  if (isRateLimitingPage(win.document)) {
+    const delaySeconds =
+      rateLimitingDelaySeconds === 0
+        ? STARTING_RATE_LIMIT_SECONDS
+        : rateLimitingDelaySeconds * RATE_LIMIT_DELAY_BACKUP_MULTIPLIER;
+    await setRateLimitDelay(delaySeconds);
+    await delay(delaySeconds * 1e3);
+
+    win.document.location.reload();
+    return;
+  } else {
+    if (rateLimitingDelaySeconds !== 0) {
+      await setRateLimitDelay(0);
+    }
   }
 
   const friend = facebookFriendsToScrape[0];

@@ -11,11 +11,15 @@ export const getByIdOrThrow = <T extends HTMLElement>(
   return element as T;
 };
 
-export const randomDelay = (maxMs: number) => {
-  const delay = Math.floor(Math.random() * maxMs);
+export const delay = (waitMs: number) => {
   return new Promise((resolve) => {
-    globalThis.setTimeout(resolve, delay);
+    globalThis.setTimeout(resolve, waitMs);
   });
+};
+
+export const randomDelay = (maxMs: number) => {
+  const waitMs = Math.floor(Math.random() * maxMs);
+  return delay(waitMs);
 };
 
 export const trimTrailingSlash = (input: string) => {

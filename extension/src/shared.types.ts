@@ -88,6 +88,7 @@ export type State = {
   facebookFriendsUrl?: string;
   /** Facebook friends to scrape for additional data */
   facebookFriendsToScrape: FacebookFriend[];
+  rateLimitingDelaySeconds: number;
 };
 
 export type RuntimeMessage = {
