@@ -1028,12 +1028,38 @@
   resolved "https://registry.yarnpkg.com/@trysound/sax/-/sax-0.2.0.tgz#cccaab758af56761eb7bf37af6f03f326dd798ad"
   integrity sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==
 
+"@types/geojson@*", "@types/geojson@^7946.0.8":
+  version "7946.0.8"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.8.tgz#30744afdb385e2945e22f3b033f897f76b1f12ca"
+  integrity sha512-1rkryxURpr6aWP7R786/UQOkJ3PcpQiWkAXBmdWc7ryFWqN6a4xfK7BtjXvFBKO9LjQ+MWQSWxYeZX1OApnArA==
+
 "@types/http-proxy@^1.17.5":
   version "1.17.7"
   resolved "https://registry.yarnpkg.com/@types/http-proxy/-/http-proxy-1.17.7.tgz#30ea85cc2c868368352a37f0d0d3581e24834c6f"
   integrity sha512-9hdj6iXH64tHSLTY+Vt2eYOGzSogC+JQ2H7bdPWkuh7KXP5qLllWx++t+K9Wk556c3dkDdPws/SpMRi0sdCT1w==
   dependencies:
     "@types/node" "*"
+
+"@types/leaflet-providers@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@types/leaflet-providers/-/leaflet-providers-1.2.1.tgz#620669b828959740a2d8572e0c0288a2382d3564"
+  integrity sha512-uNyuXiNV2q3fmgNjQji2P6RjQISmL40bbOL91/3OAwiE3XhkLKPmSAtAcfe11MAIz45iEjdFZJWppq9QyfnPIw==
+  dependencies:
+    "@types/leaflet" "*"
+
+"@types/leaflet.markercluster@^1.4.6":
+  version "1.4.6"
+  resolved "https://registry.yarnpkg.com/@types/leaflet.markercluster/-/leaflet.markercluster-1.4.6.tgz#1159460b374ba5e329cb678d0e427f99dca75be5"
+  integrity sha512-MD+bUDzxHznY0zOlSBUAMNQUGB2+xpJPKrR2MNEoBAAKa3QTKJJySBtCqWyGLvYNNO+Cdyc2c64aF2IFwe4fcQ==
+  dependencies:
+    "@types/leaflet" "*"
+
+"@types/leaflet@*", "@types/leaflet@^1.7.6":
+  version "1.7.6"
+  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.7.6.tgz#6580f4babb648972c5af3abc3d66866753fa9311"
+  integrity sha512-Emkz3V08QnlelSbpT46OEAx+TBZYTOX2r1yM7W+hWg5+djHtQ1GbEXBDRLaqQDOYcDI51Ss0ayoqoKD4CtLUDA==
+  dependencies:
+    "@types/geojson" "*"
 
 "@types/minimatch@^3.0.3":
   version "3.0.5"
@@ -3977,6 +4003,26 @@ lcid@^3.0.0:
   integrity sha512-M6T051+5QCGLBQb8id3hdvIW8+zeFV2FyBGFS9IEK5H9Wt4MueD4bW1eWikpHgZp+5xR3l5c8pZUkQsIA0BFZg==
   dependencies:
     invert-kv "^3.0.0"
+
+leaflet-extra-markers@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/leaflet-extra-markers/-/leaflet-extra-markers-1.2.1.tgz#dcea9e0ab3850c4724afa6eda8dda8fa743739fa"
+  integrity sha512-k3mGGBJg5wr4LY89MyLHcWCol3yNC9qcK1+5os+HjBk09RlxmqsywNSBwmpP1WKnkKCIgofnOFOhdM5GeK0kHQ==
+
+leaflet-providers@^1.13.0:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/leaflet-providers/-/leaflet-providers-1.13.0.tgz#10c843a23d5823a65096d40ad53f27029e13434b"
+  integrity sha512-f/sN5wdgBbVA2jcCYzScIfYNxKdn2wBJP9bu+5cRX9Xj6g8Bt1G9Sr8WgJAt/ckIFIc3LVVxCBNFpSCfTuUElg==
+
+leaflet.markercluster@^1.5.3:
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/leaflet.markercluster/-/leaflet.markercluster-1.5.3.tgz#9cdb52a4eab92671832e1ef9899669e80efc4056"
+  integrity sha512-vPTw/Bndq7eQHjLBVlWpnGeLa3t+3zGiuM7fJwCkiMFq+nmRuG3RI3f7f4N4TDX7T4NpbAXpR2+NTRSEGfCSeA==
+
+leaflet@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.7.1.tgz#10d684916edfe1bf41d688a3b97127c0322a2a19"
+  integrity sha512-/xwPEBidtg69Q3HlqPdU3DnrXQOvQU/CCHA1tcDQVzOwm91YMYaILjNp7L4Eaw5Z4sOYdbBz6koWyibppd8Zqw==
 
 levn@^0.4.1:
   version "0.4.1"
