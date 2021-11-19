@@ -16,14 +16,14 @@ const startFriendCapture = async () => {
   }
   const { url } = tabs[0];
 
-  if (typeof url !== "string") {
+  const facebookFriendsUrl = getSanitisedFriendsListUrl(url);
+
+  if (typeof facebookFriendsUrl !== "string") {
     globalThis.alert(
       "Please try that again with your Facebook friends list in the current tab. #PMDtW8"
     );
     return;
   }
-
-  const facebookFriendsUrl = getSanitisedFriendsListUrl(url);
 
   if (
     !globalThis.confirm(

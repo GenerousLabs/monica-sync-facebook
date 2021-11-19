@@ -6,10 +6,14 @@ const FACEBOOK_FRIENDS_SITE = `https://m.facebook.com/`;
  *
  * @param url The full URL from the current tab
  */
-export const getSanitisedFriendsListUrl = (url: string) => {
+export const getSanitisedFriendsListUrl = (url?: string) => {
+  if (typeof url === "undefined") {
+    return;
+  }
+
   // Ensure we start with `https://mbasic.facebook.com/`
   if (!url.startsWith(FACEBOOK_FRIENDS_SITE)) {
-    throw new Error("FATAL: Invalid friends URL #PUJg1z");
+    return;
   }
   const withoutDomain = url.substr(FACEBOOK_FRIENDS_SITE.length);
 
@@ -18,11 +22,11 @@ export const getSanitisedFriendsListUrl = (url: string) => {
   if (withoutDomain.substr(0, 12) === "profile.php?") {
     const id = withoutDomain.match(/id=[0-9]+/);
     if (id === null) {
-      throw new Error("FATAL: Missing id=XXX in friends URL #GSQpyn");
+      return;
     }
 
     if (withoutDomain.match(/v=friends/)) {
-      throw new Error("FATAL: Missing v=friends in friends URL #3hnnJP");
+      return;
     }
 
     // Put all the pieces back together again
@@ -36,7 +40,7 @@ export const getSanitisedFriendsListUrl = (url: string) => {
     const address = withoutDomain.match(/[a-zA-Z0-9\.]+\/friends/);
 
     if (address === null) {
-      throw new Error("FATAL: Invalid friends URL #lMjyRI");
+      return;
     }
 
     // Put all the pieces back together again
