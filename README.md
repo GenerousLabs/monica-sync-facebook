@@ -8,6 +8,6 @@
 - [x] Auto update `popup.html`
 - [x] Move all delays into config file
 - [x] Capture profile pictures
-- [ ] Push all captured data in a note?
+- [x] Push all captured data in a note?
 - [ ] Add a logo to the button
 - [ ] Capture the whole profile and about pages
