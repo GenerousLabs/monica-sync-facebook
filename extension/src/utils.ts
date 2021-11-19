@@ -52,3 +52,9 @@ export const getMonicaCountryCode = (countryName: string) => {
   const { id } = data;
   return id;
 };
+
+export const getBlobFromSrc = async (src: string): Promise<Blob> => {
+  const response = await fetch(src);
+  const blob = await response.blob();
+  return blob;
+};

@@ -52,6 +52,19 @@ export type MonicaAddress = {
   } | null;
   account: MonicaAccount;
 };
+export type MonicaPhoto = {
+  id: number;
+  object: "photo";
+  original_filename: string;
+  new_filename: string;
+  filesize: number;
+  mime_type: string;
+  link: string;
+  account: MonicaAccount;
+  contact: {};
+  created_at: string;
+  updated_at: string;
+};
 export type MonicaFriend = {
   account: {
     id: number;

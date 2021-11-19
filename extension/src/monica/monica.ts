@@ -2,10 +2,13 @@ import { FacebookFriend, MonicaFriend } from "../shared.types";
 import { getMonicaCountryCode } from "../utils";
 import {
   createFriendOnMonica,
+  doesMonicaFriendHavePhoto,
   getFriendFromMonicaByFacebookProfile,
   getMonicaFriendById,
   MonicaParams,
+  postPhotoToMonica,
   sendMonicaPostOrPutRequest,
+  sendMonicaRequest,
 } from "./api";
 
 const MONICA_FACEBOOK_ADDRESS_NAME = "Facebook";
@@ -37,7 +40,7 @@ const getMonicaFriendId = async ({
   return id;
 };
 
-const getOrCreateMonicaFriend = async ({
+export const getOrCreateMonicaFriend = async ({
   monicaParams,
   friend,
 }: {
@@ -148,20 +151,34 @@ export const updateMonicaLocation = async ({
 
 export const syncFriendDataToMonica = async ({
   monicaParams,
+  monicaFriend,
   friend,
 }: {
   monicaParams?: MonicaParams;
+  monicaFriend: MonicaFriend;
   friend: FacebookFriend;
 }) => {
-  /**
-   * - Get monica friend id
-   *   - Create if does not exist
-   * - Update details
-   */
-  const monicaFriend = await getOrCreateMonicaFriend({ monicaParams, friend });
-
   // Does this user have a hometown?
-  await updateMonicaLocation({ friend, monicaFriend });
+  await updateMonicaLocation({ monicaParams, monicaFriend, friend });
+};
+
+export const syncProfilePictureToMonica = async ({
+  monicaParams,
+  monicaFriend,
+  photoAsBlob,
+}: {
+  monicaParams?: MonicaParams;
+  monicaFriend: MonicaFriend;
+  photoAsBlob: Blob;
+}) => {
+  const hasPhoto = await doesMonicaFriendHavePhoto({
+    monicaParams,
+    monicaFriend,
+  });
+  if (hasPhoto) {
+    return;
+  }
+  await postPhotoToMonica({ monicaParams, monicaFriend, photoAsBlob });
 };
 
 export const pushToMonica = async () => {

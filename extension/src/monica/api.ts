@@ -1,9 +1,11 @@
 import { setFriendMonicaId } from "../facebook/friends";
+import { addLogLine } from "../shared.log";
 import {
   FacebookFriend,
   MonicaContactField,
   MonicaContactFieldType,
   MonicaFriend,
+  MonicaPhoto,
   State,
 } from "../shared.types";
 import { getState } from "../state";
@@ -109,14 +111,21 @@ export const sendMonicaPostOrPutRequest = async <ArrayOrSingle, DataType>({
   monicaParams?: MonicaParams;
   url: string;
   method: "post" | "put";
-  body: any;
+  body?: any;
 }): Promise<MonicaResponse<ArrayOrSingle, DataType>> => {
+  const bodyOpts =
+    typeof body === "undefined"
+      ? {}
+      : {
+          body: JSON.stringify(body),
+        };
+
   const opts: RequestInit = {
+    ...bodyOpts,
     method,
     headers: {
       "content-type": "application/json",
     },
-    body: JSON.stringify(body),
   };
   return sendMonicaRequest({ monicaParams, url, opts });
 };
@@ -254,4 +263,60 @@ export const createFriendOnMonica = async ({
   });
 
   return monicaFriend;
+};
+
+export const doesMonicaFriendHavePhoto = async ({
+  monicaParams,
+  monicaFriend,
+}: {
+  monicaParams?: MonicaParams;
+  monicaFriend: MonicaFriend;
+}) => {
+  const url = `/contacts/${monicaFriend.id.toString()}/photos`;
+  const result = await sendMonicaRequest<
+    MonicaArrayResponse<MonicaPhoto>,
+    MonicaPhoto
+  >({ monicaParams, url });
+  if (result.meta.total > 0) {
+    return true;
+  }
+  return false;
+};
+
+export const postPhotoToMonica = async ({
+  monicaParams,
+  monicaFriend,
+  photoAsBlob,
+}: {
+  monicaParams?: MonicaParams;
+  monicaFriend: MonicaFriend;
+  photoAsBlob: Blob;
+}) => {
+  const formData = new FormData();
+  formData.append("contact_id", monicaFriend.id.toString());
+  formData.append("photo", photoAsBlob, "profilepic.png");
+  const url = `/photos`;
+  const opts: RequestInit = {
+    method: "post",
+    body: formData,
+  };
+  const response = await sendMonicaRequest<
+    MonicaSingleResponse<MonicaPhoto>,
+    MonicaPhoto
+  >({
+    monicaParams,
+    url,
+    opts,
+  });
+  const photoId = response.data.id;
+  const avatarResult = await sendMonicaPostOrPutRequest({
+    monicaParams,
+    url: `/contacts/${monicaFriend.id.toString()}/avatar`,
+    method: "put",
+    body: {
+      source: "photo",
+      photo_id: photoId,
+    },
+  });
+  addLogLine(`Successfully uploaded photo and set avatar. #tzoI2N`);
 };

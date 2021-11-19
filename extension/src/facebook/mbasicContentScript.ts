@@ -1,5 +1,8 @@
-import { addLogLine } from "../shared.log";
-import { syncFriendDataToMonica } from "../monica/monica";
+import {
+  getOrCreateMonicaFriend,
+  syncFriendDataToMonica,
+  syncProfilePictureToMonica,
+} from "../monica/monica";
 import {
   ABOUT_PAGE_FIXED_DELAY_MS,
   ABOUT_PAGE_RANDOM_DELAY_MS,
@@ -11,12 +14,14 @@ import {
   STARTING_RATE_LIMIT_SECONDS,
 } from "../shared.config";
 import { MBASIC_FACEBOOK_URL } from "../shared.constants";
+import { addLogLine } from "../shared.log";
+import { FacebookFriend } from "../shared.types";
 import {
   getState,
   setFacebookFriendsToScrape,
   setRateLimitDelay,
 } from "../state";
-import { delay, randomDelay } from "../utils";
+import { delay, getBlobFromSrc, randomDelay } from "../utils";
 import { captureTableData } from "./mbasicAboutPageScraping";
 import {
   clickAboutLink,
@@ -58,15 +63,48 @@ const isRateLimitingPage = (doc: Document) => {
       strong.innerText.toLowerCase().indexOf("something went wrong") !== -1
   );
   if (typeof strong !== "undefined") {
-    debugger;
     return true;
   }
 
   return false;
 };
 
+const findProfilePicture = ({
+  doc,
+  friend,
+}: {
+  doc: Document;
+  friend: FacebookFriend;
+}) => {
+  const imgs = doc.getElementsByTagName("img");
+  const imgsArray = Array.from(imgs);
+  const img = imgsArray.find(
+    (img) => img.alt.toLowerCase().indexOf("profile picture") !== -1
+  );
+  if (typeof img === "undefined") {
+    addLogLine(
+      `Failed to find profile image #PE3uN9 Friend: ${friend.profileUrl}`
+    );
+    throw new Error("FATAL: Failed to find profile image");
+  }
+  return img;
+};
+
+const getProfilePictureAsDataBlob = async ({
+  doc,
+  friend,
+}: {
+  doc: Document;
+  friend: FacebookFriend;
+}) => {
+  const img = findProfilePicture({ doc, friend });
+  const blob = await getBlobFromSrc(img.src);
+  return blob;
+};
+
 const mbasicStart = async (win: Window) => {
   const { location, document } = win;
+  const doc = document;
 
   const { facebookFriendsToScrape, rateLimitingDelaySeconds } =
     await getState();
@@ -92,15 +130,21 @@ const mbasicStart = async (win: Window) => {
 
   const friend = facebookFriendsToScrape[0];
 
-  // - is this the user's about page?
-  //    - then capture their data
-  //    - remove them from the list to be scraped
-  //    - click to the next friend's profile page
   if (isAboutPage({ friend, location })) {
     await addLogLine(`Found about page #x1gM8O. Friend: ${friend.profileUrl}`);
     const updatedFriend = await captureTableData({ friend, document });
     await markFriendAsScraped();
-    await syncFriendDataToMonica({ friend: updatedFriend });
+    const monicaFriend = await getOrCreateMonicaFriend({ friend });
+    try {
+      await syncFriendDataToMonica({ friend: updatedFriend, monicaFriend });
+    } catch (error) {}
+    try {
+      const photoAsBlob = await getProfilePictureAsDataBlob({ doc, friend });
+      await syncProfilePictureToMonica({
+        monicaFriend,
+        photoAsBlob,
+      });
+    } catch (error) {}
     await delay(ABOUT_PAGE_FIXED_DELAY_MS);
     await randomDelay(ABOUT_PAGE_RANDOM_DELAY_MS);
     await goToNextFriend({ win });
