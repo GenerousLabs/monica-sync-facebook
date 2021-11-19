@@ -20,3 +20,7 @@ export const addLogLine = async (line: string) => {
   const newLog = `${log}\n${dateString} - ${line}`;
   await setLog(newLog);
 };
+
+export const emptyLogs = async () => {
+  await setLog("");
+};
