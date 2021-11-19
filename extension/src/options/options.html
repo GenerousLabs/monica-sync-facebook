@@ -9,16 +9,20 @@
     <h1>Monica Sync Facebook</h1>
     <p>This extension syncs contacts from Facebook into Monica.</p>
     <p>To get started you need to:</p>
-    <ul>
+    <ol>
       <li>Input your <strong>monica URL and token</strong></li>
       <li>Capture your friends list from Facebook</li>
-    </ul>
+      <li>
+        Then you can start crawling your friends to capture their location
+        contact information
+      </li>
+    </ol>
     <p>
       This extension takes no action without your explicit input. But once you
       start it you can leave it running as the process can take some time.
     </p>
 
-    <h2>Monica Settings</h2>
+    <h2>1. Monica Settings</h2>
     <form id="monicaForm">
       <p>
         <label>Monica API Url: <input type="text" id="monicaApiUrl" /></label>
@@ -31,7 +35,7 @@
       <button type="submit">Save Monica Settings</button>
     </form>
 
-    <h2>Facebook Friends</h2>
+    <h2>2. Facebook Friends</h2>
 
     <p>
       To capture your Facebook friends open the
@@ -40,6 +44,15 @@
       click the "Scrape Friends List" button.
     </p>
     <p>NOTE: Please ensure you only have 1 Facebook tab open at any time.</p>
+
+    <h2>3. Crawl friends</h2>
+    <p>
+      Once you've completed the steps above, you can start the "crawling"
+      process. This extension will automatically click through all of your
+      Facebook friends, click onto their about page, and then capture their
+      location and other info. That data and their profile picture will be
+      copied to your monica account.
+    </p>
 
     <h2>Here be dragons</h2>
     <p>These links might get you in trouble. No warranties past this point!</p>
