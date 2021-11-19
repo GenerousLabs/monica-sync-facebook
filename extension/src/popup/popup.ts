@@ -11,6 +11,7 @@ import { getByIdOrThrow } from "../utils";
 const startFriendCapture = async () => {
   const tabs = await browser.tabs.query({ active: true, currentWindow: true });
   if (tabs.length !== 1) {
+    globalThis.alert("Error: #QTrMIV");
     throw new Error("FATAL: Failed to find exactly 1 current tab #Ch6ToS");
   }
   const { url } = tabs[0];
