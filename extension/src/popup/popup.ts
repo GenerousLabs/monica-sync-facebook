@@ -90,6 +90,15 @@ const bindButtons = (doc: Document) => {
       browser.runtime.openOptionsPage();
     };
   } catch (error) {}
+  try {
+    getByIdOrThrow(doc, "openMap").onclick = () => {
+      const url = browser.runtime.getURL("src/map/map.html");
+      browser.tabs.create({
+        active: true,
+        url,
+      });
+    };
+  } catch (error) {}
 };
 
 const insertStats = async (doc: Document) => {
