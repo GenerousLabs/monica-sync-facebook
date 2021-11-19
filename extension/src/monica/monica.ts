@@ -8,7 +8,6 @@ import {
   MonicaParams,
   postPhotoToMonica,
   sendMonicaPostOrPutRequest,
-  sendMonicaRequest,
 } from "./api";
 
 const MONICA_FACEBOOK_ADDRESS_NAME = "Facebook";
