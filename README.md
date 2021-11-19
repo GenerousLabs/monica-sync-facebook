@@ -7,5 +7,6 @@
 - [x] Add logging
 - [x] Auto update `popup.html`
 - [x] Move all delays into config file
+- [ ] Capture profile pictures
 - [ ] Add a logo to the button
 - [ ] Capture the whole profile and about pages
