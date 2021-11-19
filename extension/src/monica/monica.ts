@@ -1,5 +1,4 @@
 import { FacebookFriend, MonicaFriend } from "../shared.types";
-import { getMonicaCountryCode } from "../utils";
 import {
   createFriendOnMonica,
   doesMonicaFriendHavePhoto,
@@ -7,10 +6,9 @@ import {
   getMonicaFriendById,
   MonicaParams,
   postPhotoToMonica,
-  sendMonicaPostOrPutRequest,
 } from "./api";
-
-const MONICA_FACEBOOK_ADDRESS_NAME = "Facebook";
+import { updateMonicaLocation } from "./location";
+import { updateMonicaFacebookNote } from "./note";
 
 const getMonicaFriendId = async ({
   monicaParams,
@@ -69,85 +67,6 @@ export const getOrCreateMonicaFriend = async ({
   return createdFriend;
 };
 
-export const updateMonicaLocation = async ({
-  monicaParams,
-  friend,
-  monicaFriend,
-}: {
-  monicaParams?: MonicaParams;
-  friend: FacebookFriend;
-  monicaFriend: MonicaFriend;
-}) => {
-  // Does the user have a location from Facebook?
-  const { tableData } = friend;
-  if (typeof tableData === "undefined") {
-    return;
-  }
-  const { data } = tableData;
-  const currentCityData = data.find(({ label }) => {
-    const l = label.toLowerCase();
-    return l === "current city" || l === "lives in";
-  });
-  if (typeof currentCityData === "undefined") {
-    return;
-  }
-
-  const pieces = currentCityData.value.split(",");
-  if (pieces.length !== 2) {
-    return;
-  }
-  const [city, country] = pieces.map((p) => p.trim());
-
-  const { addresses } = monicaFriend;
-  const address = addresses.find(
-    (a) => a.name?.toLowerCase() === MONICA_FACEBOOK_ADDRESS_NAME.toLowerCase()
-  );
-
-  const monicaCountryCode = getMonicaCountryCode(country);
-
-  const countryOrProvince =
-    typeof monicaCountryCode !== "undefined"
-      ? {
-          country: monicaCountryCode,
-        }
-      : { province: country };
-
-  if (typeof address === "undefined") {
-    const url = `/addresses`;
-    const body = {
-      ...countryOrProvince,
-      name: MONICA_FACEBOOK_ADDRESS_NAME,
-      city,
-      contact_id: monicaFriend.id,
-    };
-    await sendMonicaPostOrPutRequest({
-      monicaParams,
-      url,
-      method: "post",
-      body,
-    });
-    return;
-  }
-
-  if (address.city?.toLowerCase() === city.toLowerCase()) {
-    return;
-  }
-
-  const url = `/addresses/${address.id}`;
-  const body = {
-    name: MONICA_FACEBOOK_ADDRESS_NAME,
-    city,
-    country: monicaCountryCode,
-    contact_id: monicaFriend.id,
-  };
-  await sendMonicaPostOrPutRequest({
-    monicaParams,
-    url,
-    method: "put",
-    body,
-  });
-};
-
 export const syncFriendDataToMonica = async ({
   monicaParams,
   monicaFriend,
@@ -157,8 +76,8 @@ export const syncFriendDataToMonica = async ({
   monicaFriend: MonicaFriend;
   friend: FacebookFriend;
 }) => {
-  // Does this user have a hometown?
   await updateMonicaLocation({ monicaParams, monicaFriend, friend });
+  await updateMonicaFacebookNote({ monicaParams, monicaFriend, friend });
 };
 
 export const syncProfilePictureToMonica = async ({

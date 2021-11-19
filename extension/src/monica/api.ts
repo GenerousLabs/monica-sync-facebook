@@ -1,3 +1,4 @@
+import { monitorEventLoopDelay } from "perf_hooks";
 import { setFriendMonicaId } from "../facebook/friends";
 import { addLogLine } from "../shared.log";
 import {
@@ -5,6 +6,7 @@ import {
   MonicaContactField,
   MonicaContactFieldType,
   MonicaFriend,
+  MonicaNote,
   MonicaPhoto,
   State,
 } from "../shared.types";
@@ -319,4 +321,73 @@ export const postPhotoToMonica = async ({
     },
   });
   addLogLine(`Successfully uploaded photo and set avatar. #tzoI2N`);
+};
+
+export const getMonicaNotes = async ({
+  monicaParams,
+  monicaFriend,
+}: {
+  monicaParams?: MonicaParams;
+  monicaFriend: MonicaFriend;
+}): Promise<MonicaNote[]> => {
+  const url = `/contacts/${monicaFriend.id.toString()}/notes`;
+  const result = await sendMonicaRequest<
+    MonicaArrayResponse<MonicaNote>,
+    MonicaNote
+  >({ monicaParams, url });
+
+  if (result.meta.total === 0) {
+    return [];
+  }
+
+  return result.data;
+};
+
+export const createMonicaNote = async ({
+  monicaParams,
+  monicaFriend,
+  noteBody,
+}: {
+  monicaParams?: MonicaParams;
+  monicaFriend: MonicaFriend;
+  noteBody: string;
+}) => {
+  const url = `/notes`;
+  const body = {
+    contact_id: monicaFriend.id.toString(),
+    body: noteBody,
+    is_favorited: false,
+  };
+  await sendMonicaPostOrPutRequest({
+    monicaParams,
+    url,
+    method: "post",
+    body,
+  });
+};
+
+export const updateMonicaNote = async ({
+  monicaParams,
+  monicaFriend,
+  noteId,
+  noteBody,
+}: {
+  monicaParams?: MonicaParams;
+  monicaFriend: MonicaFriend;
+  noteId: string;
+  noteBody: string;
+}) => {
+  const url = `/notes/${noteId}`;
+  const body = {
+    body: noteBody,
+    contact_id: monicaFriend.id.toString(),
+  };
+  debugger;
+  const r = await sendMonicaPostOrPutRequest({
+    monicaParams,
+    url,
+    method: "put",
+    body,
+  });
+  debugger;
 };

@@ -65,6 +65,17 @@ export type MonicaPhoto = {
   created_at: string;
   updated_at: string;
 };
+export type MonicaNote = {
+  id: string;
+  object: "note";
+  body: string;
+  is_favorited: boolean;
+  favorited_at: string | null;
+  account: MonicaAccount;
+  contact: {};
+  created_at: string;
+  updated_at: string;
+};
 export type MonicaFriend = {
   account: {
     id: number;
@@ -89,7 +100,7 @@ export type MonicaFriend = {
   last_activity_together: string | null;
   last_called: string | null;
   nickname: string | null;
-  notes: []; // TODO
+  notes: MonicaNote[];
 };
 
 export type State = {

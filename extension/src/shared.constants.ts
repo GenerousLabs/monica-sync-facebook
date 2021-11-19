@@ -1,5 +1,7 @@
 export const M_FACEBOOK_URL = "https://m.facebook.com/";
 export const MBASIC_FACEBOOK_URL = "https://mbasic.facebook.com/";
+export const MONICA_FACEBOOK_ADDRESS_NAME = "Facebook";
+export const MONICA_FACEBOOK_NOTE_TITLE = "Facebook Info";
 
 export const MONICA_COUNTRIES = {
   AFG: { id: "AF", object: "country", name: "Afghanistan", iso: "AF" },

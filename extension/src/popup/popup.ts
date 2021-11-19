@@ -66,7 +66,8 @@ const startFriendScraping = async () => {
   const friendsToScrape = friends.filter(
     (friend) => typeof friend.tableData === "undefined"
   );
-  await setFacebookFriendsToScrape(friendsToScrape);
+  // await setFacebookFriendsToScrape(friendsToScrape);
+  await setFacebookFriendsToScrape(friends);
   browser.tabs.create({ active: true, url: MBASIC_FACEBOOK_URL });
 };
 
