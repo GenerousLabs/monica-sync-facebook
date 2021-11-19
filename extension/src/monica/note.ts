@@ -42,7 +42,6 @@ export const updateMonicaFacebookNote = async ({
       monicaFriend,
       noteBody,
     });
-    // Create the note
     return;
   }
 
@@ -50,7 +49,7 @@ export const updateMonicaFacebookNote = async ({
     return;
   }
 
-  // Update the note
+  // TODO Allow the option to always create a new note instead of updating
   await updateMonicaNote({
     monicaParams,
     monicaFriend,
