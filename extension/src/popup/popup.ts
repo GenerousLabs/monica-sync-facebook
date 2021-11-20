@@ -110,6 +110,18 @@ const insertStats = async (doc: Document) => {
     getByIdOrThrow(doc, "friendCount").innerText = friends.length.toString();
   } catch (error) {}
   try {
+    const scraped = friends.filter(
+      (friend) => typeof friend.tableData !== "undefined"
+    );
+    getByIdOrThrow(doc, "scrapedCount").innerText = scraped.length.toString();
+  } catch (error) {}
+  try {
+    const synced = friends.filter(
+      (friend) => typeof friend.monicaId !== "undefined"
+    );
+    getByIdOrThrow(doc, "syncedCount").innerText = synced.length.toString();
+  } catch (error) {}
+  try {
     getByIdOrThrow(
       doc,
       "friendsStillToScrape"
