@@ -1,4 +1,3 @@
-import { table } from "console";
 import { FacebookFriend } from "../shared.types";
 
 const FRIENDS_KEY = "__facebookFriends";
