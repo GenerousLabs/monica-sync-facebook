@@ -14,11 +14,15 @@ const setLog = async (log: string) => {
 };
 
 export const addLogLine = async (line: string) => {
-  const log = await getLog();
-  const date = new Date();
-  const dateString = date.toISOString();
-  const newLog = `${log}\n${dateString} - ${line}`;
-  await setLog(newLog);
+  try {
+    const log = await getLog();
+    const date = new Date();
+    const dateString = date.toISOString();
+    const newLog = `${log}\n${dateString} - ${line}`;
+    await setLog(newLog);
+  } catch (error) {
+    console.error("Error in addLogLine. #XKkLFD", error);
+  }
 };
 
 export const emptyLogs = async () => {
