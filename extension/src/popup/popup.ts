@@ -2,6 +2,7 @@ import {
   getFriends,
   getScrapedFriends,
   getSyncedFriends,
+  getUnmatchedFriends,
 } from "../facebook/friends";
 import { MBASIC_FACEBOOK_URL } from "../shared.constants";
 import {
@@ -103,6 +104,15 @@ const bindButtons = (doc: Document) => {
       });
     };
   } catch (error) {}
+  try {
+    getByIdOrThrow(doc, "openUnmatched").onclick = () => {
+      const url = browser.runtime.getURL("src/unmatched/unmatched.html");
+      browser.tabs.create({
+        active: true,
+        url,
+      });
+    };
+  } catch (error) {}
 };
 
 const insertStats = async (doc: Document) => {
@@ -141,6 +151,7 @@ const insertStats = async (doc: Document) => {
 };
 
 const showScrapingStatus = async (doc: Document) => {
+  const friends = await getFriends();
   const { facebookFriendsToScrape } = await getState();
   if (facebookFriendsToScrape.length === 0) {
     getByIdOrThrow(doc, "noScrapeRunning").style.display = "block";
@@ -148,6 +159,12 @@ const showScrapingStatus = async (doc: Document) => {
   } else {
     getByIdOrThrow(doc, "noScrapeRunning").style.display = "none";
     getByIdOrThrow(doc, "scrapeIsRunning").style.display = "block";
+  }
+  const unmatched = getUnmatchedFriends(friends);
+  if (unmatched.length > 0) {
+    getByIdOrThrow(doc, "unmatched").style.display = "block";
+  } else {
+    getByIdOrThrow(doc, "unmatched").style.display = "none";
   }
 };
 
