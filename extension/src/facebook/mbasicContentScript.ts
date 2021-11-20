@@ -1,7 +1,9 @@
 import {
   getOrCreateMonicaFriend,
   syncFriendDataToMonica,
+  syncFriendToMonica,
   syncProfilePictureToMonica,
+  tryToFindMonicaFriendId,
 } from "../monica/monica";
 import {
   ABOUT_PAGE_FIXED_DELAY_MS,
@@ -28,6 +30,7 @@ import {
   isAboutPage,
   isProfilePage,
 } from "./mbasicPageParsing";
+import { savePhoto } from "./photos";
 
 const goToNextFriend = async ({ win }: { win: Window }) => {
   const { facebookFriendsToScrape } = await getState();
@@ -133,18 +136,34 @@ const mbasicStart = async (win: Window) => {
   if (isAboutPage({ friend, location })) {
     await addLogLine(`Found about page #x1gM8O. Friend: ${friend.profileUrl}`);
     const updatedFriend = await captureTableData({ friend, document });
-    await markFriendAsScraped();
-    const monicaFriend = await getOrCreateMonicaFriend({ friend });
+    await addLogLine(
+      `Captured about page / table data #ux6xqN. Friend: ${friend.profileUrl}`
+    );
     try {
-      await syncFriendDataToMonica({ friend: updatedFriend, monicaFriend });
-    } catch (error) {}
-    try {
-      const photoAsBlob = await getProfilePictureAsDataBlob({ doc, friend });
-      await syncProfilePictureToMonica({
-        monicaFriend,
-        photoAsBlob,
+      const photoAsBlob = await getProfilePictureAsDataBlob({
+        doc,
+        friend: updatedFriend,
       });
-    } catch (error) {}
+      await savePhoto({ photo: photoAsBlob, friend });
+      await addLogLine(
+        `Saved facebook profile photo. #obDyrS Friend: ${friend.profileUrl}`
+      );
+    } catch (error) {
+      await addLogLine(
+        `ERROR: Failed to save photo. #lWDPLn Friend: ${
+          updatedFriend.profileUrl
+        }. Error: ${(error as Error)?.message || "unknown-error"}`
+      );
+    }
+    await markFriendAsScraped();
+
+    debugger;
+    const monicaId = await tryToFindMonicaFriendId({ friend: updatedFriend });
+    debugger;
+    if (typeof monicaId !== "undefined") {
+      await syncFriendToMonica({ friend: updatedFriend, monicaId });
+    }
+
     await delay(ABOUT_PAGE_FIXED_DELAY_MS);
     await randomDelay(ABOUT_PAGE_RANDOM_DELAY_MS);
     await goToNextFriend({ win });

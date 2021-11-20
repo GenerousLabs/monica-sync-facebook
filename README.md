@@ -28,3 +28,13 @@ How do we approach this?
   - Only push if we find a matching contact on monica
   - Keep all unpushed contacts in a separate collection to be dealt with later
     - Also with their profile images?
+
+## Delayed sync to monica
+
+Let's capture the data first, then push to monica as a second step.
+
+- Save friend data into storage
+- Try to match friends by name or by facebook profile
+  - If matched, sync data
+  - If not matched, move on
+- Present a list of unmatched friends

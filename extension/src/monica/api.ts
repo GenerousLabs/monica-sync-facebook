@@ -1,4 +1,3 @@
-import { monitorEventLoopDelay } from "perf_hooks";
 import { setFriendMonicaId } from "../facebook/friends";
 import { addLogLine } from "../shared.log";
 import {
@@ -132,6 +131,13 @@ export const sendMonicaPostOrPutRequest = async <ArrayOrSingle, DataType>({
   return sendMonicaRequest({ monicaParams, url, opts });
 };
 
+/**
+ * Given a facebook profile URL, get that friend from monica. This will throw if
+ * multiple friends have the same faecbook profile URL on monica.
+ *
+ * @param param0
+ * @returns
+ */
 export const getFriendFromMonicaByFacebookProfile = async ({
   monicaParams,
   friend,
@@ -140,7 +146,9 @@ export const getFriendFromMonicaByFacebookProfile = async ({
   friend: FacebookFriend;
 }): Promise<MonicaFriend | undefined> => {
   const { profileUrl } = friend;
-  const url = `contacts?with=contactfields&query=facebook:${profileUrl}`;
+  const url = `contacts?with=contactfields&query=facebook:${globalThis.encodeURIComponent(
+    profileUrl
+  )}`;
   const result = await sendMonicaRequest<
     MonicaArrayResponse<MonicaFriend>,
     MonicaFriend
@@ -158,7 +166,38 @@ export const getFriendFromMonicaByFacebookProfile = async ({
   if (result.meta.total === 0) {
     return;
   }
+  await addLogLine(
+    `ERROR: Found >1 monica contacts with the same facebook url. #R4kiOS Friend: ${friend.profileUrl}`
+  );
   throw new Error("FATAL: Did not get exactly 0 or 1 monica contats #4yh1ea");
+};
+
+export const getFriendFromMonicaByName = async ({
+  monicaParams,
+  friend,
+}: {
+  monicaParams?: MonicaParams;
+  friend: FacebookFriend;
+}): Promise<MonicaFriend | undefined> => {
+  const { name } = friend;
+  const url = `contacts?with=contactfields&query=${globalThis.encodeURIComponent(
+    name
+  )}`;
+  const result = await sendMonicaRequest<
+    MonicaArrayResponse<MonicaFriend>,
+    MonicaFriend
+  >({
+    monicaParams,
+    url,
+  });
+
+  if (result.meta.total === 1) {
+    const monicaFriend = result.data[0];
+    return monicaFriend;
+  }
+
+  // If we did not find exactly 1 match, return nothing
+  return;
 };
 
 export const getMonicaFriendById = async ({
@@ -200,6 +239,38 @@ const getFacebookContactFieldTypeId = async ({
   }
   const { id } = contactFieldType;
   return id;
+};
+
+export const setMonicaContactFacebookProfileUrl = async ({
+  monicaParams,
+  monicaFriend,
+  friend,
+}: {
+  monicaParams?: MonicaParams;
+  monicaFriend: MonicaFriend;
+  friend: FacebookFriend;
+}) => {
+  const { id } = monicaFriend;
+
+  const contact_field_type_id = await getFacebookContactFieldTypeId({
+    monicaParams,
+  });
+
+  const profileUrl = `/contactfields`;
+  const profileBody = {
+    contact_id: id,
+    data: friend.profileUrl,
+    contact_field_type_id,
+  };
+  await sendMonicaPostOrPutRequest<
+    MonicaSingleResponse<MonicaContactField>,
+    MonicaContactField
+  >({
+    monicaParams,
+    url: profileUrl,
+    body: profileBody,
+    method: "post",
+  });
 };
 
 export const createFriendOnMonica = async ({
@@ -244,24 +315,10 @@ export const createFriendOnMonica = async ({
 
   await setFriendMonicaId({ friend, id });
 
-  const contact_field_type_id = await getFacebookContactFieldTypeId({
+  await setMonicaContactFacebookProfileUrl({
     monicaParams,
-  });
-
-  const profileUrl = `/contactfields`;
-  const profileBody = {
-    contact_id: id,
-    data: friend.profileUrl,
-    contact_field_type_id,
-  };
-  await sendMonicaPostOrPutRequest<
-    MonicaSingleResponse<MonicaContactField>,
-    MonicaContactField
-  >({
-    monicaParams,
-    url: profileUrl,
-    body: profileBody,
-    method: "post",
+    monicaFriend,
+    friend,
   });
 
   return monicaFriend;
