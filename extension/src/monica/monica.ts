@@ -183,7 +183,6 @@ export const syncFriendToMonica = async ({
   monicaId: number;
   friend: FacebookFriend;
 }) => {
-  debugger;
   const monicaFriend = await getMonicaFriendById({
     monicaParams,
     id: monicaId,
@@ -193,9 +192,7 @@ export const syncFriendToMonica = async ({
 
   await syncFriendDataToMonica({ monicaParams, monicaFriend, friend });
 
-  debugger;
   const photoAsBlob = await getPhoto({ friend });
-  debugger;
   if (typeof photoAsBlob !== "undefined") {
     await syncProfilePictureToMonica({
       monicaParams,

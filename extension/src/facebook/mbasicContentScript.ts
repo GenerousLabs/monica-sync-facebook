@@ -157,9 +157,7 @@ const mbasicStart = async (win: Window) => {
     }
     await markFriendAsScraped();
 
-    debugger;
     const monicaId = await tryToFindMonicaFriendId({ friend: updatedFriend });
-    debugger;
     if (typeof monicaId !== "undefined") {
       await syncFriendToMonica({ friend: updatedFriend, monicaId });
     }

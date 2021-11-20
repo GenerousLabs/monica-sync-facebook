@@ -439,12 +439,10 @@ export const updateMonicaNote = async ({
     body: noteBody,
     contact_id: monicaFriend.id.toString(),
   };
-  debugger;
   const r = await sendMonicaPostOrPutRequest({
     monicaParams,
     url,
     method: "put",
     body,
   });
-  debugger;
 };
