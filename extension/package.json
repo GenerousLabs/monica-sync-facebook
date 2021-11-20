@@ -36,6 +36,7 @@
     "leaflet": "^1.7.1",
     "leaflet-extra-markers": "^1.2.1",
     "leaflet-providers": "^1.13.0",
-    "leaflet.markercluster": "^1.5.3"
+    "leaflet.markercluster": "^1.5.3",
+    "localforage": "^1.10.0"
   }
 }
