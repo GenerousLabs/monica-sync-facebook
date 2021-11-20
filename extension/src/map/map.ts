@@ -26,7 +26,6 @@ async function renderMap(markers: L.Marker[]) {
 
   L.control.scale().addTo(map)
 
-  console.log('markers', markers)
   var clusterMarkers = L.markerClusterGroup();
   markers.forEach(marker => clusterMarkers.addLayer(marker))
   map.addLayer(clusterMarkers);
@@ -35,7 +34,6 @@ async function renderMap(markers: L.Marker[]) {
 async function pullPageFromMonica(pageNumber: number) {
   console.log('pulling page', pageNumber)
   
-
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${monicaApiToken}`)
   const options = { headers }
@@ -54,7 +52,9 @@ async function pullDataFromMonica() {
   let { data, lastPage} = await pullPageFromMonica(i)
   allContacts.push(...data);
 
-  while (i < lastPage) {
+  i++
+
+  while (i <= lastPage) {
     const { data } = await pullPageFromMonica(i)
     allContacts.push(...data)
     i++
@@ -66,7 +66,6 @@ async function pullDataFromMonica() {
 async function transformContacts(monicaContacts: any[]) {
   console.log('monicaContacts', monicaContacts)
   const allMarkers = await Promise.all(monicaContacts.map(transformContact))
-  console.log('allMarkers', allMarkers)
   return allMarkers.flat().filter(m => m) as L.Marker[]
 }
 
@@ -97,7 +96,7 @@ ${addressString}`
     const marker = L.marker(latlng, options)
     return marker
   }))
-  console.log('built some addresses for contact', markers)
+
   return markers
 }
 
@@ -117,7 +116,6 @@ async function lookupFromMapbox(addressString: string) {
 }
 
 async function updateContactLatLng(address: any, latlng: L.LatLngLiteral) {
-  console.log('updating latlng', latlng, address)
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${monicaApiToken}`)
   headers.set('Content-Type', 'application/json')
@@ -139,14 +137,11 @@ async function updateContactLatLng(address: any, latlng: L.LatLngLiteral) {
 }
 
 async function setup() {
-
   const monicaParams = await getMonicaParams();
   monicaApiToken = monicaParams.monicaApiToken
   monicaApiUrl = monicaParams.monicaApiUrl
   const monicaContacts = await pullDataFromMonica()
-  console.log('monicaContacts', monicaContacts)
   const markers: L.Marker[] = await transformContacts(monicaContacts)
-  console.log('markers in setup', markers)
   renderMap(markers)
 }
 
