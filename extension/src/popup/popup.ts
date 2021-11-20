@@ -1,4 +1,8 @@
-import { getFriends } from "../facebook/friends";
+import {
+  getFriends,
+  getScrapedFriends,
+  getSyncedFriends,
+} from "../facebook/friends";
 import { MBASIC_FACEBOOK_URL } from "../shared.constants";
 import {
   getState,
@@ -110,15 +114,11 @@ const insertStats = async (doc: Document) => {
     getByIdOrThrow(doc, "friendCount").innerText = friends.length.toString();
   } catch (error) {}
   try {
-    const scraped = friends.filter(
-      (friend) => typeof friend.tableData !== "undefined"
-    );
+    const scraped = getScrapedFriends(friends);
     getByIdOrThrow(doc, "scrapedCount").innerText = scraped.length.toString();
   } catch (error) {}
   try {
-    const synced = friends.filter(
-      (friend) => typeof friend.monicaId !== "undefined"
-    );
+    const synced = getSyncedFriends(friends);
     getByIdOrThrow(doc, "syncedCount").innerText = synced.length.toString();
   } catch (error) {}
   try {
