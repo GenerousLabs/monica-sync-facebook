@@ -82,3 +82,15 @@ export const setFriendMonicaId = async ({
   const updatedFriend = { ...friend, monicaId: id };
   await setFriend(updatedFriend);
 };
+
+export const setFriendsToSyncToMonica = async (profileUrlsToSync: string[]) => {
+  const friends = await getFriends();
+  const updatedFriends = friends.map((friend) => {
+    const { profileUrl } = friend;
+    if (profileUrlsToSync.indexOf(profileUrl) === -1) {
+      return { ...friend };
+    }
+    return { ...friend, forceSyncToMonica: true };
+  });
+  await setFriends(updatedFriends);
+};

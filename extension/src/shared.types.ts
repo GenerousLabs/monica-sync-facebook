@@ -6,6 +6,9 @@ export type FacebookFriend = {
     data: { label: string; value: string }[];
   };
   monicaId?: number;
+  /** This contact should be force synced to monica even there is no matching
+   * contact already in monica */
+  forceSyncToMonica?: boolean;
 };
 
 type MonicaAccount = {
