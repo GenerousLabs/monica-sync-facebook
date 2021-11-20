@@ -58,7 +58,7 @@ const startFriendScraping = async () => {
     return tab.url.startsWith(MBASIC_FACEBOOK_URL);
   });
   if (typeof mFacebookTab !== "undefined") {
-    globalThis.alert("Please close all m.facebook.com tabs first #r9ddVp");
+    globalThis.alert("Please close all mbasic.facebook.com tabs first #r9ddVp");
     return;
   }
 
