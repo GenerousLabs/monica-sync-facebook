@@ -36,7 +36,7 @@ const unmatchedStart = async (doc: Document) => {
   const elements = unmatched.map((friend) => {
     const { name, profileUrl } = friend;
     const li = doc.createElement("li");
-    li.innerHTML = `<input type="checkbox" value="${profileUrl}" /> ${name} <input type="text" value="${friend.profileUrl}" /">`;
+    li.innerHTML = `<input type="checkbox" value="${profileUrl}" /> ${name} <input type="text" value="${friend.profileUrl}" readonly="readonly" /">`;
     return li;
   });
   const friendsUl = getByIdOrThrow(doc, "friends");
