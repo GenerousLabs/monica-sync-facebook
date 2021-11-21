@@ -202,7 +202,7 @@ export const syncFriendToMonica = async ({
       });
       await removePhoto({ friend });
     } catch (error) {
-      addLogLine(
+      await addLogLine(
         `ERROR: syncProfilePictureToMonica threw. Friend: ${
           friend.profileUrl
         }. Error: ${(error as Error)?.message}`
