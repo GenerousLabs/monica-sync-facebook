@@ -110,10 +110,23 @@ async function transformContact(contact: {
     if (address.latitude && address.longitude) {
       latlng = { lat: address.latitude, lng: address.longitude };
     } else {
-      latlng = await lookupFromMapbox(addressString);
+      try {
+        latlng = await lookupFromMapbox(addressString);
+        // Wait 1s after making a monica request to avoid rate limit
+      } catch (error) {
+        console.error("ERROR: lookupFromMapbox threw #ocirNP", error);
+        continue;
+      }
+      await delay(1e3);
 
       if (latlng) {
-        updateContactLatLng(address, latlng);
+        try {
+          await updateContactLatLng(address, latlng);
+        } catch (error) {
+          console.error("ERROR: updateContactLatLng threw #6Dwggw", error);
+        }
+        // Wait 1s after making a monica request to avoid rate limit
+        await delay(1e3);
       } else {
         continue;
       }
