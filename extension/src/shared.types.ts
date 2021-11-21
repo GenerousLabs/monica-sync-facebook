@@ -85,7 +85,7 @@ export type MonicaFriend = {
   };
   addresses: MonicaAddress[];
   complete_name: string;
-  contact_fields: MonicaContactField[] | null;
+  contactFields: MonicaContactField[] | null;
   created_at: string;
   description: string | null;
   first_name: string;

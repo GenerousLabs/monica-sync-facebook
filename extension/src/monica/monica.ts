@@ -122,8 +122,8 @@ export const syncFacebookProfileUrlToMonica = async ({
   monicaFriend: MonicaFriend;
   friend: FacebookFriend;
 }) => {
-  const { contact_fields } = monicaFriend;
-  const facebookProfileUrl = (contact_fields || []).find(
+  const { contactFields } = monicaFriend;
+  const facebookProfileUrl = (contactFields || []).find(
     (field) => field.contact_field_type.name.toLowerCase() === "facebook"
   );
 
