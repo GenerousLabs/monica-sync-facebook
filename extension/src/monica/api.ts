@@ -191,13 +191,12 @@ export const getFriendFromMonicaByName = async ({
     url,
   });
 
-  if (result.meta.total === 1) {
-    const monicaFriend = result.data[0];
-    return monicaFriend;
-  }
-
-  // If we did not find exactly 1 match, return nothing
-  return;
+  // NOTE: We search the array here because for a query like `john smith` monica
+  // will return any contact with `john` or `smith` anywhere in their data.
+  const monicaFriend = result.data.find(
+    (friend) => friend.complete_name === name
+  );
+  return monicaFriend;
 };
 
 export const getMonicaFriendById = async ({
