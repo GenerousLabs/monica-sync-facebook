@@ -2,6 +2,7 @@ import * as L from "leaflet";
 import "leaflet-providers";
 import "leaflet.markercluster";
 import { getMonicaParams } from "../state";
+import { delay } from "../utils";
 let monicaApiToken: string, monicaApiUrl: string;
 
 // fix for default icon & parceljs: https://github.com/Leaflet/Leaflet/issues/4968#issuecomment-483402699
@@ -61,6 +62,9 @@ async function pullDataFromMonica() {
     const { data } = await pullPageFromMonica(i);
     allContacts.push(...data);
     i++;
+    // Ensure that we don't hit the monica rate limit by waiting 1s after each
+    // request (the default monica rate limit is 60 requests per minute.
+    await delay(1e3);
   }
 
   return allContacts;
