@@ -1,5 +1,5 @@
 import { setFriendMonicaId } from "../facebook/friends";
-import { getPhoto } from "../facebook/photos";
+import { getPhoto, removePhoto } from "../facebook/photos";
 import { addLogLine } from "../shared.log";
 import { FacebookFriend, MonicaFriend } from "../shared.types";
 import {
@@ -194,11 +194,20 @@ export const syncFriendToMonica = async ({
 
   const photoAsBlob = await getPhoto({ friend });
   if (typeof photoAsBlob !== "undefined") {
-    await syncProfilePictureToMonica({
-      monicaParams,
-      monicaFriend,
-      photoAsBlob,
-    });
+    try {
+      await syncProfilePictureToMonica({
+        monicaParams,
+        monicaFriend,
+        photoAsBlob,
+      });
+      await removePhoto({ friend });
+    } catch (error) {
+      addLogLine(
+        `ERROR: syncProfilePictureToMonica threw. Friend: ${
+          friend.profileUrl
+        }. Error: ${(error as Error)?.message}`
+      );
+    }
   }
 };
 
