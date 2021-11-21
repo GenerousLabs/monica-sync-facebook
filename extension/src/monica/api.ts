@@ -180,7 +180,9 @@ export const getFriendFromMonicaByName = async ({
   friend: FacebookFriend;
 }): Promise<MonicaFriend | undefined> => {
   const { name } = friend;
-  const url = `contacts?with=contactfields&query=${globalThis.encodeURIComponent(
+  // NOTE: Monica is TERRIBLE at matching so a direct name match might not show
+  // up in the first 15 records, hence we need to set the `limit=100` here.
+  const url = `contacts?limit=100&with=contactfields&query=${globalThis.encodeURIComponent(
     name
   )}`;
   const result = await sendMonicaRequest<
