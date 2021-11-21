@@ -1,6 +1,6 @@
 import {
   getFriends,
-  getUnmatchedFriends,
+  selectUnmatchedFriends,
   setFriendsToSyncToMonica,
 } from "../facebook/friends";
 import { getByIdOrThrow } from "../utils";
@@ -15,7 +15,7 @@ const syncToMonicaFactory = (doc: Document) => async () => {
 
 const unmatchedStart = async (doc: Document) => {
   const friends = await getFriends();
-  const unmatched = getUnmatchedFriends(friends);
+  const unmatched = selectUnmatchedFriends(friends);
   const elements = unmatched.map((friend) => {
     const { name, profileUrl } = friend;
     const li = doc.createElement("li");

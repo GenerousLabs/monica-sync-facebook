@@ -13,26 +13,33 @@ export const getFriends = async () => {
   return friends;
 };
 
-export const getSyncedFriends = (friends: FacebookFriend[]) => {
+export const selectSyncedFriends = (friends: FacebookFriend[]) => {
   const synced = friends.filter(
     (friend) => typeof friend.monicaId !== "undefined"
   );
   return synced;
 };
 
-export const getScrapedFriends = (friends: FacebookFriend[]) => {
+export const selectScrapedFriends = (friends: FacebookFriend[]) => {
   const scraped = friends.filter(
     (friend) => typeof friend.tableData !== "undefined"
   );
   return scraped;
 };
 
-export const getUnmatchedFriends = (friends: FacebookFriend[]) => {
+export const selectUnmatchedFriends = (friends: FacebookFriend[]) => {
   const unmatched = friends.filter(
     ({ tableData, monicaId }) =>
       typeof tableData !== "undefined" && typeof monicaId === "undefined"
   );
   return unmatched;
+};
+
+export const selectForceSyncFriends = (friends: FacebookFriend[]) => {
+  const toSync = friends.filter(
+    ({ forceSyncToMonica, monicaId }) => forceSyncToMonica && !monicaId
+  );
+  return toSync;
 };
 
 export const setFriends = async (friends: FacebookFriend[]) => {
@@ -79,7 +86,9 @@ export const setFriendMonicaId = async ({
   friend: FacebookFriend;
   id: number;
 }) => {
-  const updatedFriend = { ...friend, monicaId: id };
+  // Remove the `forceSyncToMonica` field when we set a monicaId
+  const { forceSyncToMonica, ...rest } = friend;
+  const updatedFriend = { ...rest, monicaId: id };
   await setFriend(updatedFriend);
 };
 

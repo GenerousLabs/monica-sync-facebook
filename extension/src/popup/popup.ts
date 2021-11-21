@@ -1,8 +1,8 @@
 import {
   getFriends,
-  getScrapedFriends,
-  getSyncedFriends,
-  getUnmatchedFriends,
+  selectScrapedFriends,
+  selectSyncedFriends,
+  selectUnmatchedFriends,
 } from "../facebook/friends";
 import { MBASIC_FACEBOOK_URL } from "../shared.constants";
 import {
@@ -124,11 +124,11 @@ const insertStats = async (doc: Document) => {
     getByIdOrThrow(doc, "friendCount").innerText = friends.length.toString();
   } catch (error) {}
   try {
-    const scraped = getScrapedFriends(friends);
+    const scraped = selectScrapedFriends(friends);
     getByIdOrThrow(doc, "scrapedCount").innerText = scraped.length.toString();
   } catch (error) {}
   try {
-    const synced = getSyncedFriends(friends);
+    const synced = selectSyncedFriends(friends);
     getByIdOrThrow(doc, "syncedCount").innerText = synced.length.toString();
   } catch (error) {}
   try {
@@ -160,7 +160,7 @@ const showScrapingStatus = async (doc: Document) => {
     getByIdOrThrow(doc, "noScrapeRunning").style.display = "none";
     getByIdOrThrow(doc, "scrapeIsRunning").style.display = "block";
   }
-  const unmatched = getUnmatchedFriends(friends);
+  const unmatched = selectUnmatchedFriends(friends);
   if (unmatched.length > 0) {
     getByIdOrThrow(doc, "unmatched").style.display = "block";
   } else {
