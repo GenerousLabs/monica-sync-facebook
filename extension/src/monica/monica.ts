@@ -2,6 +2,7 @@ import { setFriendMonicaId } from "../facebook/friends";
 import { getPhoto, removePhoto } from "../facebook/photos";
 import { addLogLine } from "../shared.log";
 import { FacebookFriend, MonicaFriend } from "../shared.types";
+import { delay } from "../utils";
 import {
   createFriendOnMonica,
   doesMonicaFriendHavePhoto,
@@ -64,6 +65,9 @@ export const tryToFindMonicaFriendId = async ({
     await setFriendMonicaId({ friend, id });
     return id;
   }
+
+  // Wait 1s before each step to avoid hitting the monica rate limit
+  await delay(1e3);
 
   const monicaFriendByName = await getFriendFromMonicaByName({
     monicaParams,
