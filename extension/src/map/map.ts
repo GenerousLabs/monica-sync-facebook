@@ -52,6 +52,8 @@ async function pullPageFromMonica(pageNumber: number) {
   return { data, lastPage };
 }
 
+// TODO: Figure out how to cache this, it can take 3 minutes to pull 4k contacts
+// from monica even pulling 100 items per page (and conumes ~5MB)
 async function pullDataFromMonica() {
   let allContacts = [];
   let i = 1;
