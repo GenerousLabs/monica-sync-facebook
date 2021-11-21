@@ -57,8 +57,7 @@ async function pullPageFromMonica(pageNumber: number) {
 async function pullDataFromMonica() {
   let allContacts = [];
   let i = 1;
-  let { data, lastPage } = await pullPageFromMonica(i);
-  allContacts.push(...data);
+  let { lastPage } = await pullPageFromMonica(i);
 
   while (i < lastPage) {
     const { data } = await pullPageFromMonica(i);
