@@ -25,3 +25,8 @@ export const getPhoto = async ({ friend }: { friend: FacebookFriend }) => {
   }
   return photo;
 };
+
+export const removePhoto = async ({ friend }: { friend: FacebookFriend }) => {
+  const key = friendToKey(friend);
+  await localforage.removeItem(key);
+};
