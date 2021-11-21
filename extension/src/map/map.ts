@@ -72,7 +72,13 @@ async function pullDataFromMonica() {
 
 async function transformContacts(monicaContacts: any[]) {
   console.log("monicaContacts", monicaContacts);
-  const allMarkers = await Promise.all(monicaContacts.map(transformContact));
+
+  const allMarkers: L.Marker<any>[][] = [];
+  for (const contact of monicaContacts) {
+    const transformedContact = await transformContact(contact);
+    allMarkers.push(transformedContact);
+  }
+
   console.log("allMarkers", allMarkers);
   return allMarkers.flat().filter((m) => m) as L.Marker[];
 }
@@ -88,34 +94,37 @@ async function transformContact(contact: {
     .filter((x) => x)
     .join(" ");
 
-  const markers = Promise.all(
-    contact.addresses.map(async (address: any) => {
-      const addressString = [
-        address.street,
-        address.city,
-        address.province,
-        address.country?.name,
-      ]
-        .filter((x) => x)
-        .join(", ");
+  const markers: L.Marker<any>[] = [];
+  for (const address of contact.addresses) {
+    const addressString = [
+      address.street,
+      address.city,
+      address.province,
+      address.country?.name,
+    ]
+      .filter((x) => x)
+      .join(", ");
 
-      let latlng;
-      if (address.latitude && address.longitude) {
-        latlng = { lat: address.latitude, lng: address.longitude };
+    let latlng;
+    if (address.latitude && address.longitude) {
+      latlng = { lat: address.latitude, lng: address.longitude };
+    } else {
+      latlng = await lookupFromMapbox(addressString);
+
+      if (latlng) {
+        updateContactLatLng(address, latlng);
       } else {
-        latlng = await lookupFromMapbox(addressString);
-        if (latlng) updateContactLatLng(address, latlng);
-        else return undefined;
+        continue;
       }
+    }
 
-      const options: L.MarkerOptions = {
-        title: `${name}
+    const options: L.MarkerOptions = {
+      title: `${name}
 ${addressString}`,
-      };
-      const marker = L.marker(latlng, options);
-      return marker;
-    })
-  );
+    };
+    const marker = L.marker(latlng, options);
+    markers.push(marker);
+  }
   console.log("built some addresses for contact", markers);
   return markers;
 }
