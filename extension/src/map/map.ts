@@ -36,7 +36,7 @@ async function pullPageFromMonica(pageNumber: number) {
   headers.set("Authorization", `Bearer ${monicaApiToken}`);
   const options = { headers };
   const response = await fetch(
-    `${monicaApiUrl}/contacts?page=${pageNumber}`,
+    `${monicaApiUrl}/contacts?limit=100&page=${pageNumber}`,
     options
   );
   if (response.status != 200)
