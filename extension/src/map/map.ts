@@ -159,7 +159,7 @@ async function updateContactLatLng(address: any, latlng: L.LatLngLiteral) {
     street: address.street,
     city: address.city,
     province: address.province,
-    country: address.country.id,
+    country: address.country?.id,
     postal_code: address.postal_code,
     latitude: latlng.lat,
     longitude: latlng.lng,
