@@ -368,7 +368,7 @@ export const postPhotoToMonica = async ({
     opts,
   });
   const photoId = response.data.id;
-  const avatarResult = await sendMonicaPostOrPutRequest({
+  await sendMonicaPostOrPutRequest({
     monicaParams,
     url: `/contacts/${monicaFriend.id.toString()}/avatar`,
     method: "put",
