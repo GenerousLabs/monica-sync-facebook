@@ -7,3 +7,17 @@ html, body, #map {
   height: 100%;
   width: 100vw;
 }
+
+.name-marker {
+  background-color: white;
+  border-radius: 5px;
+  border-color: black;
+  border-style: ridge;
+  min-width: fit-content;
+  min-height: 20px;
+  padding: 3px 5px
+}
+
+.name-marker > span {
+  line-height: 20px
+}

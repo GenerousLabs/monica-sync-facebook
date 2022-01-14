@@ -13,26 +13,22 @@ L.Icon.Default.mergeOptions({
 });
  
 
-async function renderMap(markers: L.Marker[]) {
+async function renderMap() {
   const map = L.map('map', {
     center: [52.5148763, 13.385661],
     zoom: 5,
     minZoom: 1,
-    maxZoom: 18
+    maxZoom: 14
   })
 
+  // look at pretty providers here: https://leaflet-extras.github.io/leaflet-providers/preview/
   L.tileLayer
-    .provider('OpenStreetMap.DE')
+    .provider('CartoDB.VoyagerLabelsUnder')
     .addTo(map)
 
   L.control.scale().addTo(map)
 
-  var clusterMarkers = L.markerClusterGroup({
-    showCoverageOnHover: false,    
-  }
-  );
-  markers.forEach(marker => clusterMarkers.addLayer(marker))
-  map.addLayer(clusterMarkers);
+  return map
 }
 
 async function pullPageFromMonica(pageNumber: number) {
@@ -42,7 +38,7 @@ async function pullPageFromMonica(pageNumber: number) {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${monicaApiToken}`)
   const options = { headers }
-  const response = await fetch(`${monicaApiUrl}/contacts?page=${pageNumber}&limit=${PAGE_SIZE}`, options)
+  const response = await fetch(`${monicaApiUrl}/contacts?page=${pageNumber}&limit=${PAGE_SIZE}&with=contactfields`, options)
   if (response.status != 200) throw Error(`received status ${response.status} when questing page ${pageNumber}`)
   const json = await response.json()
   const data = json.data
@@ -56,12 +52,15 @@ async function pullDataFromMonica() {
   const KEY = 'my-key'
   let allContacts = []
   let i = 1
-  let { data, lastPage, total } = await pullPageFromMonica(i)
 
+  // CURRENTLY CHANGED TO ALWAYS ASSUME DATA IS FRESH
   // assume local data is fresh if it's the same number of contacts
   const result: { [KEY]: { timestamp: string, data: any[] }} = await browser.storage.local.get(KEY)
   console.log('result', result)
-  if (result[KEY]?.data?.length === total ) return result[KEY].data
+  if (result[KEY]?.data?.length > 0) return result[KEY].data
+  console.log('local data not fresh, pulling contacts again')
+  let { data, lastPage, total } = await pullPageFromMonica(i)
+
   allContacts.push(...data);
 
   i++
@@ -82,7 +81,7 @@ async function transformContacts(monicaContacts: any[]) {
   return allMarkers.flat().filter(m => m) as L.Marker[]
 }
 
-async function transformContact(contact: { addresses: any[], first_name: string, last_name: string, nickname: string, id: number}) {
+async function transformContact(contact: { addresses: any[], first_name: string, last_name: string, nickname: string, id: number, contactFields: any[]}) {
   const name = [contact.first_name, contact.nickname, contact.last_name]
     .filter(x => x)
     .join(' ')
@@ -100,13 +99,22 @@ async function transformContact(contact: { addresses: any[], first_name: string,
       if (latlng) await updateContactLatLng(address, latlng)
       else return undefined
     }
+
+    const facebookField = contact?.contactFields?.find(f => f?.contact_field_type?.name === 'Facebook')
+    console.log('facebookField', facebookField)
+    const facebookLink = facebookField ? `${facebookField?.contact_field_type?.protocol}/${facebookField?.content}` : ''
+
+    const popup =
+`<h3>${name}</h3>
+<p>${addressString}</p>
+<p><a href=${facebookLink} target="_blank">Facebook</a></p>`
     
     const options: L.MarkerOptions = {
-      title:
-`${name}
-${addressString}`
-    }
+      icon: L.divIcon({ className: 'name-marker', html: `<span>${contact.first_name}</span>` })
+  }
+
     const marker = L.marker(latlng, options)
+    marker.bindPopup(popup).openPopup()
     return marker
   }))
 
@@ -129,6 +137,8 @@ async function lookupFromMapbox(addressString: string) {
 }
 
 async function updateContactLatLng(address: any, latlng: L.LatLngLiteral) {
+  console.log('skipping')
+  return
   console.log('RATE_LIMITED', RATE_LIMITED)
   if (RATE_LIMITED) {
     console.error(`we are rate limited since ${RATE_LIMITED}`)
@@ -166,12 +176,18 @@ async function updateContactLatLng(address: any, latlng: L.LatLngLiteral) {
 }
 
 async function setup() {
+  const map = await renderMap()
   const monicaParams = await getMonicaParams();
   monicaApiToken = monicaParams.monicaApiToken
   monicaApiUrl = monicaParams.monicaApiUrl
   const monicaContacts = await pullDataFromMonica()
   const markers: L.Marker[] = await transformContacts(monicaContacts)
-  renderMap(markers)
+  var clusterMarkers = L.markerClusterGroup({
+    showCoverageOnHover: false,
+    spiderfyDistanceMultiplier: 1.5
+  })
+  markers.forEach(marker => clusterMarkers.addLayer(marker))
+  map.addLayer(clusterMarkers);
 }
 
 setup()
