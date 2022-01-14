@@ -15,7 +15,7 @@
   "scripts": {
     "start": "yarn watch",
     "watch:parcel": "parcel watch manifest.json --dist-dir dist --no-cache --no-hmr --config @parcel/config-webextension",
-    "watch:web-ext": "web-ext run --source-dir=dist/webext-dev --verbose",
+    "watch:web-ext": "web-ext run --source-dir=dist/webext-dev --firefox-profile=./firefox-profile  --keep-profile-changes --profile-create-if-missing --verbose",
     "watch": "concurrently yarn:watch:*",
     "build": "parcel build src/manifest.json --target webext-prod --config @parcel/config-webextension"
   },

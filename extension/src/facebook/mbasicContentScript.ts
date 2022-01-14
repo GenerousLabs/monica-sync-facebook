@@ -69,6 +69,13 @@ const isRateLimitingPage = (doc: Document) => {
   return false;
 };
 
+const isAccessDeniedPage = (doc: Document) => {
+  const searchString = 'The page you requested cannot be displayed right now'
+  const objectsContainer = doc.getElementById("objects_container")
+  if (objectsContainer?.innerHTML.includes(searchString)) return true
+  return false;
+};
+
 const findProfilePicture = ({
   doc,
   friend,
@@ -130,6 +137,15 @@ const mbasicStart = async (win: Window) => {
 
   const friend = facebookFriendsToScrape[0];
 
+  if (isAccessDeniedPage(doc)) {
+    await addLogLine(`Found "Not available" page #u8do53. Friend: ${friend.profileUrl}`);
+    await markFriendAsScraped();
+    await randomDelay(ABOUT_PAGE_RANDOM_DELAY_MS);
+    await delay(ABOUT_PAGE_FIXED_DELAY_MS);
+    await goToNextFriend({ win });
+    return
+  }
+
   if (isAboutPage({ friend, location })) {
     await addLogLine(`Found about page #x1gM8O. Friend: ${friend.profileUrl}`);
     const updatedFriend = await captureTableData({ friend, document });
@@ -154,7 +170,16 @@ const mbasicStart = async (win: Window) => {
     );
     await delay(PROFILE_PAGE_FIXED_DELAY_MS);
     await randomDelay(PROFILE_PAGE_RANDOM_DELAY_MS);
-    clickAboutLink(document);
+    try {
+      clickAboutLink(document);
+    } catch (e) {
+      console.error(e)
+      await addLogLine(
+        `Encountered error #uIkdAf. Friend: ${friend.profileUrl}. Error: ${e}`
+      )
+      await markFriendAsScraped();
+      await goToNextFriend({ win });
+    }
   } else {
     await addLogLine(`Starting crawl. #6zOw4E`);
     await delay(GETTING_STARTED_FIXED_DELAY_MS);

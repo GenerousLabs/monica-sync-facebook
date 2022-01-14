@@ -3,6 +3,7 @@ import 'leaflet-providers'
 import 'leaflet.markercluster'
 import { getMonicaParams } from '../state'
 let monicaApiToken: string, monicaApiUrl: string
+let RATE_LIMITED: number | null = null
 
 // fix for default icon & parceljs: https://github.com/Leaflet/Leaflet/issues/4968#issuecomment-483402699
 L.Icon.Default.mergeOptions({
@@ -26,30 +27,41 @@ async function renderMap(markers: L.Marker[]) {
 
   L.control.scale().addTo(map)
 
-  var clusterMarkers = L.markerClusterGroup();
+  var clusterMarkers = L.markerClusterGroup({
+    showCoverageOnHover: false,    
+  }
+  );
   markers.forEach(marker => clusterMarkers.addLayer(marker))
   map.addLayer(clusterMarkers);
 }
 
 async function pullPageFromMonica(pageNumber: number) {
   console.log('pulling page', pageNumber)
+  const PAGE_SIZE = 100
   
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${monicaApiToken}`)
   const options = { headers }
-  const response = await fetch(`${monicaApiUrl}/contacts?page=${pageNumber}`, options)
+  const response = await fetch(`${monicaApiUrl}/contacts?page=${pageNumber}&limit=${PAGE_SIZE}`, options)
   if (response.status != 200) throw Error(`received status ${response.status} when questing page ${pageNumber}`)
   const json = await response.json()
   const data = json.data
   const lastPage = json.meta?.last_page
-  if (!data || !lastPage) throw Error(`received bad json when pulling page ${pageNumber}: ${json}`)
-  return { data, lastPage }
+  const total = json.meta?.total
+  if (!data || !lastPage) throw Error(`received bad json when pulling page ${pageNumber}: ${json}`)
+  return { data, lastPage, total }
 }
 
 async function pullDataFromMonica() {
+  const KEY = 'my-key'
   let allContacts = []
   let i = 1
-  let { data, lastPage} = await pullPageFromMonica(i)
+  let { data, lastPage, total } = await pullPageFromMonica(i)
+
+  // assume local data is fresh if it's the same number of contacts
+  const result: { [KEY]: { timestamp: string, data: any[] }} = await browser.storage.local.get(KEY)
+  console.log('result', result)
+  if (result[KEY]?.data?.length === total ) return result[KEY].data
   allContacts.push(...data);
 
   i++
@@ -60,6 +72,7 @@ async function pullDataFromMonica() {
     i++
   }
 
+  await browser.storage.local.set({ [KEY]: { timestamp: new Date().toISOString(), data: allContacts}})
   return allContacts
 }
 
@@ -84,7 +97,7 @@ async function transformContact(contact: { addresses: any[], first_name: string,
       latlng = { lat: address.latitude, lng: address.longitude }
     } else {
       latlng = await lookupFromMapbox(addressString)
-      if (latlng) updateContactLatLng(address, latlng)
+      if (latlng) await updateContactLatLng(address, latlng)
       else return undefined
     }
     
@@ -116,6 +129,15 @@ async function lookupFromMapbox(addressString: string) {
 }
 
 async function updateContactLatLng(address: any, latlng: L.LatLngLiteral) {
+  console.log('RATE_LIMITED', RATE_LIMITED)
+  if (RATE_LIMITED) {
+    console.error(`we are rate limited since ${RATE_LIMITED}`)
+    if ((Date.now() - RATE_LIMITED) > (60 * 1000)) {
+      console.log('more than 60 seconds since last attempt, trying again')
+    } else {
+      return
+    }
+  }
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${monicaApiToken}`)
   headers.set('Content-Type', 'application/json')
@@ -133,7 +155,14 @@ async function updateContactLatLng(address: any, latlng: L.LatLngLiteral) {
   const options = { headers, method: 'put', body: JSON.stringify(payload) }
   
   const response = await fetch(`${monicaApiUrl}/addresses/${address.id}`, options)
-  if (response.status != 200) throw Error(`received status ${response.status} when updating address ${address.id} for contact ${address.contact.id}`)
+  if (response.status === 429) {
+    console.error('received 429 response, activating RATE_LIMITED')
+    RATE_LIMITED = Date.now()
+  } else if (response.status != 200) {
+     console.error(`received status ${response.status} when updating address ${address.id} for contact ${address.contact.id}`)
+  } else {
+  RATE_LIMITED = null
+  }
 }
 
 async function setup() {

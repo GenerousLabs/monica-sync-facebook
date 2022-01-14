@@ -4,14 +4,14 @@ export const STARTING_RATE_LIMIT_SECONDS = 7;
 export const RATE_LIMIT_DELAY_BACKUP_MULTIPLIER = 3;
 
 /** After scraping an about page, always wait this long before the random wait*/
-export const ABOUT_PAGE_FIXED_DELAY_MS = 2e3;
+export const ABOUT_PAGE_FIXED_DELAY_MS = 30e3;
 /** After we scrape an about page, how long do we wait before moving onto the
  * next page */
 export const ABOUT_PAGE_RANDOM_DELAY_MS = 5e3;
 
 /** After we navigate to a profile page, always wait this long before the random
  * delay */
-export const PROFILE_PAGE_FIXED_DELAY_MS = 2e3;
+export const PROFILE_PAGE_FIXED_DELAY_MS = 30e3;
 /** After we navigate to a profile page, how long do we wait before moving onto
  * the next page */
 export const PROFILE_PAGE_RANDOM_DELAY_MS = 6e3;
